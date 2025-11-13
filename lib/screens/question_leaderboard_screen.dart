@@ -473,6 +473,8 @@ class _ContinueButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final auth = AuthService();
+
     return StreamBuilder(
       stream: FirebaseFirestore.instance
           .collection('sessions')
@@ -483,31 +485,121 @@ class _ContinueButton extends StatelessWidget {
 
         final data = snapshot.data!.data();
         final state = data?['questionState'] as String? ?? '';
+        final hostId = data?['hostId'] as String?;
+        final isHost = hostId == auth.uid;
 
-        // Auto-dismiss when state changes from reveal
-        if (state != 'reveal') {
-          // Will auto-navigate via the session state listener
-          return const SizedBox.shrink();
-        }
+        // Check if host is also a player
+        return StreamBuilder(
+          stream: FirebaseFirestore.instance
+              .collection('sessions')
+              .doc(sessionId)
+              .collection('players')
+              .doc(auth.uid)
+              .snapshots(),
+          builder: (context, playerSnap) {
+            final isHostPlayer = playerSnap.hasData && playerSnap.data!.exists;
 
-        return Container(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                children: [
-                  Text(
-                    'Waiting for host...',
-                    style: TextStyle(color: Colors.grey[600], fontSize: 16),
+            // Auto-dismiss when state changes from reveal
+            if (state != 'reveal') {
+              // Will auto-navigate via the session state listener
+              return const SizedBox.shrink();
+            }
+
+            // If host is playing, show them Next Question button
+            if (isHost && isHostPlayer) {
+              return Container(
+                padding: const EdgeInsets.all(16),
+                child: ElevatedButton(
+                  onPressed: () async {
+                    // Trigger next question via session controller
+                    final currentIndex =
+                        (data?['currentQuestionIndex'] as num?)?.toInt() ?? 0;
+                    final quizId = data?['quizId'] as String? ?? '';
+
+                    // Get total questions to check if this is the last one
+                    final quizDoc = await FirebaseFirestore.instance
+                        .collection('quizzes')
+                        .doc(quizId)
+                        .get();
+                    final totalQuestions =
+                        (quizDoc.data()?['totalQuestions'] as num?)?.toInt() ??
+                        0;
+
+                    if (currentIndex >= totalQuestions - 1) {
+                      // End session
+                      await FirebaseFirestore.instance
+                          .collection('sessions')
+                          .doc(sessionId)
+                          .update({
+                            'questionState': 'ended',
+                            'status': 'ended',
+                            'endedAt': FieldValue.serverTimestamp(),
+                          });
+                    } else {
+                      // Next question
+                      await FirebaseFirestore.instance
+                          .collection('sessions')
+                          .doc(sessionId)
+                          .update({
+                            'currentQuestionIndex': currentIndex + 1,
+                            'questionState': 'answering',
+                            'questionStartAt': FieldValue.serverTimestamp(),
+                            'questionEndAt': Timestamp.fromDate(
+                              DateTime.now().add(const Duration(seconds: 30)),
+                            ),
+                          });
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 48,
+                      vertical: 16,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
-                  const SizedBox(height: 12),
-                  LinearProgressIndicator(
-                    backgroundColor: Colors.grey[300],
-                    valueColor: AlwaysStoppedAnimation(Colors.purple[300]),
+                  child: const Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.arrow_forward, size: 24),
+                      SizedBox(width: 8),
+                      Text(
+                        'Next Question',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            )
-            .animate(onPlay: (controller) => controller.repeat())
-            .shimmer(duration: 2000.ms);
+                ),
+              );
+            }
+
+            // For non-host players, show waiting message
+            return Container(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    children: [
+                      Text(
+                        'Waiting for host...',
+                        style: TextStyle(color: Colors.grey[600], fontSize: 16),
+                      ),
+                      const SizedBox(height: 12),
+                      LinearProgressIndicator(
+                        backgroundColor: Colors.grey[300],
+                        valueColor: AlwaysStoppedAnimation(Colors.purple[300]),
+                      ),
+                    ],
+                  ),
+                )
+                .animate(onPlay: (controller) => controller.repeat())
+                .shimmer(duration: 2000.ms);
+          },
+        );
       },
     );
   }
