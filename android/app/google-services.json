@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "464211923494",
+    "project_id": "lamaplayy",
+    "storage_bucket": "lamaplayy.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:464211923494:android:d54a2a64afd7fadb6d4ce7",
+        "android_client_info": {
+          "package_name": "com.example.lamaplay"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBeyhuq--XhIChAUioEI4CcgfehrUPmWd8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

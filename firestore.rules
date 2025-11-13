@@ -1,0 +1,144 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isAuthed() { return request.auth != null; }
+    function uid() { return request.auth.uid; }
+    function isMember(roomId) {
+      return exists(/databases/$(database)/documents/rooms/$(roomId)/players/$(uid()));
+    }
+    function isHost(room) { return room.data.hostId == uid(); }
+    function room(roomId) { return get(/databases/$(database)/documents/rooms/$(roomId)); }
+    function round(roomId, roundId) { return get(/databases/$(database)/documents/rooms/$(roomId)/rounds/$(roundId)); }
+    
+    // ===== NEW QUIZ SYSTEM =====
+    
+    // Quizzes - Public read, authenticated write
+    match /quizzes/{quizId} {
+      allow read: if true;  // Public read for all quizzes
+      allow create: if isAuthed();
+      allow update, delete: if isAuthed() && request.auth.uid == resource.data.createdBy;
+      
+      // Questions subcollection
+      match /questions/{questionId} {
+        allow read: if true;  // Public read
+        allow write: if isAuthed() && request.auth.uid == get(/databases/$(database)/documents/quizzes/$(quizId)).data.createdBy;
+      }
+    }
+    
+    // Sessions - Public read, controlled write
+    match /sessions/{sessionId} {
+      allow read: if true;  // Anyone can read session state
+      allow create: if isAuthed();
+      allow update: if isAuthed() && request.auth.uid == resource.data.hostId;
+      
+      // Players subcollection
+      match /players/{playerId} {
+        allow read: if true;
+        allow create: if isAuthed();
+        allow update: if isAuthed() && (
+          request.auth.uid == playerId  // Player can update own doc
+          || request.auth.uid == get(/databases/$(database)/documents/sessions/$(sessionId)).data.hostId  // Host can update scores
+        );
+      }
+      
+      // Answers subcollection
+      match /answers/{answerId} {
+        allow read: if true;
+        allow create: if isAuthed() && request.auth.uid == request.resource.data.playerId;
+        allow update, delete: if false;  // Answers are immutable
+      }
+      
+      // Results subcollection
+      match /results/{resultId} {
+        allow read: if true;
+        allow write: if isAuthed() && request.auth.uid == get(/databases/$(database)/documents/sessions/$(sessionId)).data.hostId;
+      }
+    }
+    
+    // ===== LEGACY ROOM SYSTEM =====
+
+    // Rooms root
+    match /rooms/{roomId} {
+      allow read: if isAuthed() && isMember(roomId);
+      allow create: if isAuthed();
+  allow update, delete: if isAuthed() && isHost(room(roomId));
+
+      // Restrict host-only fields on update for non-hosts
+      allow update: if isAuthed() && isMember(roomId) && !(
+        'status' in request.resource.data.diff(resource.data).changedKeys()
+        || 'playlist' in request.resource.data.diff(resource.data).changedKeys()
+        || 'roundIndex' in request.resource.data.diff(resource.data).changedKeys()
+      );
+
+      // Players subcollection
+      match /players/{playerId} {
+        allow read: if isAuthed() && isMember(roomId);
+        // Each user can write only their own doc, except score (host only)
+        allow create, update: if isAuthed() && playerId == uid() && !('score' in request.resource.data.keys());
+        // Host may update scores and admin fields
+        allow update: if isAuthed() && isHost(room(roomId))
+          && ('score' in request.resource.data.keys() || 'kicked' in request.resource.data.keys());
+      }
+
+      // Rounds
+      match /rounds/{roundId} {
+        allow read: if isAuthed() && isMember(roomId);
+  // Host controls round lifecycle and results writes
+  allow create, update, delete: if isAuthed() && isHost(room(roomId));
+
+        // Submissions
+        match /submissions/{playerId} {
+          // Read rules:
+          // - During 'play': only the submitting player can read their own doc.
+          // - During 'lock' or later: all members can read.
+          allow read: if isAuthed() && isMember(roomId) && (
+            playerId == uid() || get(/databases/$(database)/documents/rooms/$(roomId)/rounds/$(roundId)).data.state in ['lock','vote','results']
+          );
+          // Only the player can write their submission during state == 'play'
+          allow create, update: if isAuthed() && playerId == uid() &&
+            round(roomId, roundId).data.state == 'play';
+        }
+
+        // Votes
+        match /votes/{playerId} {
+          // Read rules:
+          // - During 'vote': only the voting player can read their own doc.
+          // - During 'lock' or 'results': all members can read.
+          allow read: if isAuthed() && isMember(roomId) && (
+            playerId == uid() || get(/databases/$(database)/documents/rooms/$(roomId)/rounds/$(roundId)).data.state in ['lock','results']
+          );
+          // Only the player can vote during state == 'vote'
+          allow create, update: if isAuthed() && playerId == uid() &&
+            round(roomId, roundId).data.state == 'vote';
+        }
+      }
+    }
+
+    // roomSecrets/{roomId}/rounds/{roundId}
+    match /roomSecrets/{roomId}/rounds/{roundId} {
+      // Only host may write secrets
+      allow create, update, delete: if isAuthed() && isHost(room(roomId));
+      // Reading secrets:
+      // - Host always
+      // - Odd One Out during play: all members except spy can read word
+      // - Draw & Guess during play: only artist can read drawWord
+      // - Bluff Trivia: trueAnswer readable only after results
+      // - After results: all members can read
+      allow read: if isAuthed() && (
+        isHost(room(roomId)) || (
+          isMember(roomId) && (
+            round(roomId, roundId).data.state == 'results' ||
+            (
+              round(roomId, roundId).data.state == 'play' && (
+                // Odd One Out: block spy
+                (round(roomId, roundId).data.gameType == 'odd_one_out' && round(roomId, roundId).data.payload.spyId != uid()) ||
+                // Draw & Guess: only artist sees secret
+                (round(roomId, roundId).data.gameType == 'draw_guess_lite' && resource.data.artistId == uid())
+              )
+            )
+          )
+        )
+      );
+    }
+  }
+}

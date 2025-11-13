@@ -1,0 +1,35 @@
+{
+  "rules": {
+    
+    "presence": {
+      "rooms": {
+        "$roomId": {
+          "players": {
+            "$playerId": {
+              ".read": "auth != null",
+              ".write": "auth != null && auth.uid === $playerId"
+            }
+          }
+        }
+      }
+    },
+
+    "drawing": {
+      "rooms": {
+        "$roomId": {
+          "rounds": {
+            "$roundId": {
+              ".read": "auth != null",
+              "strokes": {
+                "$packetId": {
+                  ".read": "auth != null",
+                  ".write": "auth != null && auth.uid === data.parent().parent().child('meta').child('artistId').val() && root.child('firestore').child('rooms').child($roomId).child('rounds').child($roundId).child('state').val() === 'play'"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
