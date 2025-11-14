@@ -124,9 +124,18 @@ class HostScoringService {
                 playerOrder = [];
               }
 
+              // Convert orderSolution (strings in correct order) to indices
+              // orderSolution contains the correct order of strings like ["item1", "item2", "item3"]
+              // We need to convert this to indices based on the shuffled options
+              // For example, if options = ["item2", "item3", "item1"] and orderSolution = ["item1", "item2", "item3"]
+              // The correct indices should be [2, 0, 1] (positions of items in options array)
+              final correctOrderIndices = question.orderSolution!
+                  .map((item) => question.options.indexOf(item))
+                  .toList();
+
               basePoints = ScoringUtils.orderBase(
                 playerOrder,
-                question.orderSolution,
+                correctOrderIndices,
               );
               correct = basePoints >= 700;
             }
@@ -229,7 +238,7 @@ class HostScoringService {
             'createdAt': FieldValue.serverTimestamp(),
           });
 
-      // 9. Batch update player scores and streaks
+      // 9. Batch update player scores, streaks, and answer counts
       final batch = _db.batch();
       deltas.forEach((playerId, delta) {
         final playerRef = _db
@@ -237,10 +246,13 @@ class HostScoringService {
             .doc(sessionId)
             .collection('players')
             .doc(playerId);
+        final isCorrect = perPlayer[playerId]!['correct'] as bool;
         batch.update(playerRef, {
           'score': FieldValue.increment(delta),
           'streak': streaks[playerId] ?? 0,
-          'lastAnswerCorrect': perPlayer[playerId]!['correct'],
+          'lastAnswerCorrect': isCorrect,
+          'correctAnswers': FieldValue.increment(isCorrect ? 1 : 0),
+          'totalAnswers': FieldValue.increment(1),
           'updatedAt': FieldValue.serverTimestamp(),
         });
       });

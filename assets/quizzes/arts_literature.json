@@ -1,0 +1,90 @@
+{
+  "meta": {
+    "title": "🎨 Arts & Literature",
+    "description": "Explore the world of art, books, and creative masterpieces!",
+    "category": "Arts",
+    "difficulty": "Medium",
+    "totalQuestions": 10
+  },
+  "questions": [
+    {
+      "index": 0,
+      "type": "mcq",
+      "text": "Who wrote 'Romeo and Juliet'?",
+      "options": ["Charles Dickens", "William Shakespeare", "Jane Austen", "Mark Twain"],
+      "correctIndex": 1,
+      "timeLimitSeconds": 15
+    },
+    {
+      "index": 1,
+      "type": "mcq",
+      "text": "Which artist cut off his own ear?",
+      "options": ["Pablo Picasso", "Vincent van Gogh", "Claude Monet", "Salvador Dalí"],
+      "correctIndex": 1,
+      "timeLimitSeconds": 20
+    },
+    {
+      "index": 2,
+      "type": "tf",
+      "text": "The 'Harry Potter' series has 7 books.",
+      "options": ["True", "False"],
+      "correctIndex": 0,
+      "timeLimitSeconds": 15
+    },
+    {
+      "index": 3,
+      "type": "mcq",
+      "text": "Who painted the ceiling of the Sistine Chapel?",
+      "options": ["Leonardo da Vinci", "Raphael", "Michelangelo", "Donatello"],
+      "correctIndex": 2,
+      "timeLimitSeconds": 20
+    },
+    {
+      "index": 4,
+      "type": "mcq",
+      "text": "Which novel begins with 'Call me Ishmael'?",
+      "options": ["The Great Gatsby", "Moby-Dick", "Treasure Island", "Robinson Crusoe"],
+      "correctIndex": 1,
+      "timeLimitSeconds": 20
+    },
+    {
+      "index": 5,
+      "type": "tf",
+      "text": "The Louvre Museum is located in Paris.",
+      "options": ["True", "False"],
+      "correctIndex": 0,
+      "timeLimitSeconds": 15
+    },
+    {
+      "index": 6,
+      "type": "numeric",
+      "text": "How many lines does a sonnet have?",
+      "numericAnswer": 14,
+      "timeLimitSeconds": 20
+    },
+    {
+      "index": 7,
+      "type": "mcq",
+      "text": "Who wrote '1984' and 'Animal Farm'?",
+      "options": ["Aldous Huxley", "George Orwell", "Ray Bradbury", "H.G. Wells"],
+      "correctIndex": 1,
+      "timeLimitSeconds": 20
+    },
+    {
+      "index": 8,
+      "type": "mcq",
+      "text": "What art movement was Pablo Picasso associated with?",
+      "options": ["Impressionism", "Surrealism", "Cubism", "Realism"],
+      "correctIndex": 2,
+      "timeLimitSeconds": 20
+    },
+    {
+      "index": 9,
+      "type": "tf",
+      "text": "The 'Mona Lisa' has eyebrows.",
+      "options": ["True", "False"],
+      "correctIndex": 1,
+      "timeLimitSeconds": 20
+    }
+  ]
+}

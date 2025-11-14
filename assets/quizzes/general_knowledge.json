@@ -1,0 +1,89 @@
+{
+  "meta": {
+    "title": "🧠 General Knowledge Challenge",
+    "description": "A mix of trivia questions to test your overall knowledge across various topics!",
+    "category": "General",
+    "difficulty": "Medium",
+    "totalQuestions": 10
+  },
+  "questions": [
+    {
+      "index": 0,
+      "type": "mcq",
+      "text": "What is the capital of Australia?",
+      "options": ["Sydney", "Melbourne", "Canberra", "Perth"],
+      "correctIndex": 2,
+      "timeLimitSeconds": 20
+    },
+    {
+      "index": 1,
+      "type": "tf",
+      "text": "The Great Wall of China is visible from space with the naked eye.",
+      "options": ["True", "False"],
+      "correctIndex": 1,
+      "timeLimitSeconds": 15
+    },
+    {
+      "index": 2,
+      "type": "numeric",
+      "text": "How many continents are there on Earth?",
+      "numericAnswer": 7,
+      "timeLimitSeconds": 15
+    },
+    {
+      "index": 3,
+      "type": "mcq",
+      "text": "Who painted the Mona Lisa?",
+      "options": ["Michelangelo", "Leonardo da Vinci", "Raphael", "Donatello"],
+      "correctIndex": 1,
+      "timeLimitSeconds": 20
+    },
+    {
+      "index": 4,
+      "type": "mcq",
+      "text": "What is the largest ocean on Earth?",
+      "options": ["Atlantic Ocean", "Indian Ocean", "Arctic Ocean", "Pacific Ocean"],
+      "correctIndex": 3,
+      "timeLimitSeconds": 20
+    },
+    {
+      "index": 5,
+      "type": "tf",
+      "text": "Humans and dinosaurs lived at the same time.",
+      "options": ["True", "False"],
+      "correctIndex": 1,
+      "timeLimitSeconds": 15
+    },
+    {
+      "index": 6,
+      "type": "mcq",
+      "text": "Which planet is known as the Red Planet?",
+      "options": ["Venus", "Mars", "Jupiter", "Saturn"],
+      "correctIndex": 1,
+      "timeLimitSeconds": 15
+    },
+    {
+      "index": 7,
+      "type": "numeric",
+      "text": "How many days are in a leap year?",
+      "numericAnswer": 366,
+      "timeLimitSeconds": 15
+    },
+    {
+      "index": 8,
+      "type": "mcq",
+      "text": "What is the smallest country in the world?",
+      "options": ["Monaco", "Vatican City", "San Marino", "Liechtenstein"],
+      "correctIndex": 1,
+      "timeLimitSeconds": 20
+    },
+    {
+      "index": 9,
+      "type": "tf",
+      "text": "Lightning never strikes the same place twice.",
+      "options": ["True", "False"],
+      "correctIndex": 1,
+      "timeLimitSeconds": 15
+    }
+  ]
+}

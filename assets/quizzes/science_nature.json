@@ -1,0 +1,89 @@
+{
+  "meta": {
+    "title": "🔬 Science & Nature Quiz",
+    "description": "Explore the wonders of science, biology, chemistry, and the natural world!",
+    "category": "Science",
+    "difficulty": "Medium",
+    "totalQuestions": 10
+  },
+  "questions": [
+    {
+      "index": 0,
+      "type": "mcq",
+      "text": "What is the chemical symbol for gold?",
+      "options": ["Go", "Gd", "Au", "Ag"],
+      "correctIndex": 2,
+      "timeLimitSeconds": 20
+    },
+    {
+      "index": 1,
+      "type": "numeric",
+      "text": "How many bones are in the adult human body?",
+      "numericAnswer": 206,
+      "timeLimitSeconds": 20
+    },
+    {
+      "index": 2,
+      "type": "tf",
+      "text": "Water boils at 100 degrees Celsius at sea level.",
+      "options": ["True", "False"],
+      "correctIndex": 0,
+      "timeLimitSeconds": 15
+    },
+    {
+      "index": 3,
+      "type": "mcq",
+      "text": "What is the speed of light in a vacuum?",
+      "options": ["299,792 km/s", "150,000 km/s", "500,000 km/s", "1,000,000 km/s"],
+      "correctIndex": 0,
+      "timeLimitSeconds": 25
+    },
+    {
+      "index": 4,
+      "type": "mcq",
+      "text": "Which gas do plants absorb from the atmosphere?",
+      "options": ["Oxygen", "Nitrogen", "Carbon Dioxide", "Hydrogen"],
+      "correctIndex": 2,
+      "timeLimitSeconds": 20
+    },
+    {
+      "index": 5,
+      "type": "tf",
+      "text": "Sharks are mammals.",
+      "options": ["True", "False"],
+      "correctIndex": 1,
+      "timeLimitSeconds": 15
+    },
+    {
+      "index": 6,
+      "type": "mcq",
+      "text": "What is the largest organ in the human body?",
+      "options": ["Heart", "Brain", "Liver", "Skin"],
+      "correctIndex": 3,
+      "timeLimitSeconds": 20
+    },
+    {
+      "index": 7,
+      "type": "numeric",
+      "text": "How many planets are in our solar system?",
+      "numericAnswer": 8,
+      "timeLimitSeconds": 15
+    },
+    {
+      "index": 8,
+      "type": "mcq",
+      "text": "What is the process by which plants make their food?",
+      "options": ["Respiration", "Photosynthesis", "Digestion", "Fermentation"],
+      "correctIndex": 1,
+      "timeLimitSeconds": 20
+    },
+    {
+      "index": 9,
+      "type": "tf",
+      "text": "Sound travels faster in water than in air.",
+      "options": ["True", "False"],
+      "correctIndex": 0,
+      "timeLimitSeconds": 20
+    }
+  ]
+}

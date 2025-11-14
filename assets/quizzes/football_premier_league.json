@@ -1,0 +1,89 @@
+{
+  "meta": {
+    "title": "⚽ Premier League Expert Challenge",
+    "description": "Ultimate test for true Premier League enthusiasts - records, history, and trivia",
+    "category": "Sports",
+    "difficulty": "Hard",
+    "totalQuestions": 10
+  },
+  "questions": [
+    {
+      "index": 0,
+      "type": "mcq",
+      "text": "Who holds the record for most Premier League goals in a single season?",
+      "options": ["Mohamed Salah (32)", "Erling Haaland (36)", "Alan Shearer (34)", "Thierry Henry (30)"],
+      "correctIndex": 1,
+      "timeLimitSeconds": 20
+    },
+    {
+      "index": 1,
+      "type": "numeric",
+      "text": "How many Premier League titles has Manchester United won?",
+      "correctValue": 13,
+      "timeLimitSeconds": 20
+    },
+    {
+      "index": 2,
+      "type": "mcq",
+      "text": "Which team completed an entire Premier League season unbeaten (2003-04)?",
+      "options": ["Manchester United", "Chelsea", "Arsenal", "Liverpool"],
+      "correctIndex": 2,
+      "timeLimitSeconds": 20
+    },
+    {
+      "index": 3,
+      "type": "tf",
+      "text": "Leicester City won the Premier League in 2015-16 despite being 5000-1 outsiders at the start of the season.",
+      "options": ["True", "False"],
+      "correctIndex": 0,
+      "timeLimitSeconds": 20
+    },
+    {
+      "index": 4,
+      "type": "mcq",
+      "text": "Who is the Premier League's all-time top scorer?",
+      "options": ["Wayne Rooney", "Sergio Agüero", "Alan Shearer", "Thierry Henry"],
+      "correctIndex": 2,
+      "timeLimitSeconds": 20
+    },
+    {
+      "index": 5,
+      "type": "numeric",
+      "text": "What is the record number of points in a Premier League season (set by Manchester City in 2017-18)?",
+      "correctValue": 100,
+      "timeLimitSeconds": 20
+    },
+    {
+      "index": 6,
+      "type": "mcq",
+      "text": "Who was the first non-British manager to win the Premier League?",
+      "options": ["José Mourinho", "Arsène Wenger", "Pep Guardiola", "Carlo Ancelotti"],
+      "correctIndex": 1,
+      "timeLimitSeconds": 20
+    },
+    {
+      "index": 7,
+      "type": "tf",
+      "text": "Ryan Giggs holds the record for most Premier League appearances with 632 games.",
+      "options": ["True", "False"],
+      "correctIndex": 1,
+      "timeLimitSeconds": 20
+    },
+    {
+      "index": 8,
+      "type": "mcq",
+      "text": "Which player has won the Premier League Player of the Season award the most times?",
+      "options": ["Cristiano Ronaldo", "Thierry Henry (2 times)", "Kevin De Bruyne", "Steven Gerrard"],
+      "correctIndex": 1,
+      "timeLimitSeconds": 20
+    },
+    {
+      "index": 9,
+      "type": "mcq",
+      "text": "What was the fastest goal in Premier League history (7.69 seconds)?",
+      "options": ["Ledley King", "Shane Long", "Alan Shearer", "Christian Eriksen"],
+      "correctIndex": 1,
+      "timeLimitSeconds": 20
+    }
+  ]
+}

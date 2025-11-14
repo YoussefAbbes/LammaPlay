@@ -8,6 +8,7 @@ class QuizMeta {
   final String createdBy;
   final DateTime createdAt;
   final String visibility; // private|public
+  final String gameMode; // standard|uniqueAnswer|truthOrDare|hrissa
 
   QuizMeta({
     required this.id,
@@ -17,6 +18,7 @@ class QuizMeta {
     required this.createdBy,
     required this.createdAt,
     required this.visibility,
+    this.gameMode = 'standard',
   });
 
   factory QuizMeta.fromDoc(DocumentSnapshot<Map<String, dynamic>> doc) {
@@ -31,6 +33,7 @@ class QuizMeta {
           (d['createdAt'] as Timestamp?)?.toDate() ??
           DateTime.fromMillisecondsSinceEpoch(0),
       visibility: (d['visibility'] as String?) ?? 'private',
+      gameMode: (d['gameMode'] as String?) ?? 'standard',
     );
   }
 
@@ -41,5 +44,6 @@ class QuizMeta {
     'createdBy': createdBy,
     'createdAt': createdAt,
     'visibility': visibility,
+    'gameMode': gameMode,
   };
 }

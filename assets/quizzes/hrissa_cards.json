@@ -1,0 +1,581 @@
+{
+  "meta": {
+    "title": "🌶️ الهريسة 2 - لعبة الكروت",
+    "description": "العب بالكروت! كل كارت فيها سؤال من كاتيغوري مختلف. شد كارت وجاوب!",
+    "category": "Party",
+    "difficulty": "Medium",
+    "gameMode": "hrissaCards",
+    "totalCards": 70
+  },
+  "categories": [
+    {
+      "id": "daring",
+      "name": "جريئة",
+      "icon": "🔥",
+      "color": "#FF4444",
+      "colorLight": "#FF8888"
+    },
+    {
+      "id": "personal",
+      "name": "معلومات شخصية",
+      "icon": "💭",
+      "color": "#9C27B0",
+      "colorLight": "#CE93D8"
+    },
+    {
+      "id": "thinking",
+      "name": "تخمام",
+      "icon": "🧠",
+      "color": "#2196F3",
+      "colorLight": "#64B5F6"
+    },
+    {
+      "id": "whatif",
+      "name": "لو كان",
+      "icon": "✨",
+      "color": "#FF9800",
+      "colorLight": "#FFB74D"
+    },
+    {
+      "id": "truth",
+      "name": "حقيقة",
+      "icon": "🎭",
+      "color": "#4CAF50",
+      "colorLight": "#81C784"
+    },
+    {
+      "id": "why",
+      "name": "علاش",
+      "icon": "❓",
+      "color": "#E91E63",
+      "colorLight": "#F48FB1"
+    },
+    {
+      "id": "wouldyou",
+      "name": "اختار واحد",
+      "icon": "🤔",
+      "color": "#00BCD4",
+      "colorLight": "#4DD0E1"
+    },
+    {
+      "id": "memories",
+      "name": "ذكريات",
+      "icon": "📸",
+      "color": "#795548",
+      "colorLight": "#A1887F"
+    },
+    {
+      "id": "secrets",
+      "name": "أسرار",
+      "icon": "🤫",
+      "color": "#607D8B",
+      "colorLight": "#90A4AE"
+    },
+    {
+      "id": "challenge",
+      "name": "تحدي",
+      "icon": "💪",
+      "color": "#FF5722",
+      "colorLight": "#FF8A65"
+    },
+    {
+      "id": "crazy",
+      "name": "مجنونة",
+      "icon": "🤪",
+      "color": "#FFEB3B",
+      "colorLight": "#FFF176"
+    }
+  ],
+  "cards": [
+    {
+      "id": 1,
+      "category": "daring",
+      "question": "قول سر ما قلتوش لحد قبل",
+      "difficulty": "hard",
+      "spicyLevel": 5
+    },
+    {
+      "id": 2,
+      "category": "daring",
+      "question": "شكون الي ما تحبوش في هالطاولة؟",
+      "difficulty": "hard",
+      "spicyLevel": 5
+    },
+    {
+      "id": 3,
+      "category": "daring",
+      "question": "عمرك خنت في علاقة؟ قول الحقيقة",
+      "difficulty": "hard",
+      "spicyLevel": 5
+    },
+    {
+      "id": 4,
+      "category": "daring",
+      "question": "أكبر كذبة قلتها لوالديك؟",
+      "difficulty": "medium",
+      "spicyLevel": 4
+    },
+    {
+      "id": 5,
+      "category": "daring",
+      "question": "شنوة أكثر حاجة تندم عليها؟",
+      "difficulty": "medium",
+      "spicyLevel": 4
+    },
+    {
+      "id": 6,
+      "category": "personal",
+      "question": "شكون آخر شخص فكرت فيه قبل ما ترقد؟",
+      "difficulty": "easy",
+      "spicyLevel": 2
+    },
+    {
+      "id": 7,
+      "category": "personal",
+      "question": "شنوة الحاجة الي تخليك تبكي بسرعة؟",
+      "difficulty": "easy",
+      "spicyLevel": 2
+    },
+    {
+      "id": 8,
+      "category": "personal",
+      "question": "وقتاش آخر مرة قلت 'نحبك' لحد؟",
+      "difficulty": "easy",
+      "spicyLevel": 2
+    },
+    {
+      "id": 9,
+      "category": "personal",
+      "question": "شنوة أكثر حاجة تخوفك في المستقبل؟",
+      "difficulty": "medium",
+      "spicyLevel": 3
+    },
+    {
+      "id": 10,
+      "category": "personal",
+      "question": "تحب تعيش وين لو تنجم تختار أي بلاصة؟",
+      "difficulty": "easy",
+      "spicyLevel": 1
+    },
+    {
+      "id": 11,
+      "category": "thinking",
+      "question": "لو تنجم تمحي ذكرى من حياتك، شنوة تمحي؟",
+      "difficulty": "medium",
+      "spicyLevel": 3
+    },
+    {
+      "id": 12,
+      "category": "thinking",
+      "question": "شنوة معنى السعادة بالنسبة ليك؟",
+      "difficulty": "medium",
+      "spicyLevel": 2
+    },
+    {
+      "id": 13,
+      "category": "thinking",
+      "question": "لو عندك 24 ساعة برك باش تعيش، كيفاش تقضيهم؟",
+      "difficulty": "hard",
+      "spicyLevel": 3
+    },
+    {
+      "id": 14,
+      "category": "thinking",
+      "question": "شنوة أهم حاجة تعلمتها من تجاربك؟",
+      "difficulty": "medium",
+      "spicyLevel": 2
+    },
+    {
+      "id": 15,
+      "category": "thinking",
+      "question": "كيفاش تعرّف روحك في 3 كلمات؟",
+      "difficulty": "easy",
+      "spicyLevel": 1
+    },
+    {
+      "id": 16,
+      "category": "whatif",
+      "question": "لو كان تنجم تقابل روحك في 10 سنين، شنوة تقولها؟",
+      "difficulty": "medium",
+      "spicyLevel": 2
+    },
+    {
+      "id": 17,
+      "category": "whatif",
+      "question": "لو كان عندك قوة خارقة، شنوة تختار؟",
+      "difficulty": "easy",
+      "spicyLevel": 1
+    },
+    {
+      "id": 18,
+      "category": "whatif",
+      "question": "لو كان تنجم ترجع في الزمن، وين تمشي؟",
+      "difficulty": "medium",
+      "spicyLevel": 2
+    },
+    {
+      "id": 19,
+      "category": "whatif",
+      "question": "لو كان فما حد معاك في جزيرة، شكون تختار؟",
+      "difficulty": "easy",
+      "spicyLevel": 2
+    },
+    {
+      "id": 20,
+      "category": "whatif",
+      "question": "لو كان تنجم تبدل حاجة في العالم، شنوة تبدل؟",
+      "difficulty": "medium",
+      "spicyLevel": 1
+    },
+    {
+      "id": 21,
+      "category": "truth",
+      "question": "عمرك حسيت بالغيرة من صاحبك؟",
+      "difficulty": "medium",
+      "spicyLevel": 3
+    },
+    {
+      "id": 22,
+      "category": "truth",
+      "question": "عمرك كذبت على حد هوني توا؟",
+      "difficulty": "medium",
+      "spicyLevel": 4
+    },
+    {
+      "id": 23,
+      "category": "truth",
+      "question": "تحب تكون مشهور ولا تعيش هاني وراحة؟",
+      "difficulty": "easy",
+      "spicyLevel": 1
+    },
+    {
+      "id": 24,
+      "category": "truth",
+      "question": "عمرك ندمت على علاقة بديتها؟",
+      "difficulty": "medium",
+      "spicyLevel": 4
+    },
+    {
+      "id": 25,
+      "category": "truth",
+      "question": "تقدر تسامح الخيانة؟",
+      "difficulty": "medium",
+      "spicyLevel": 3
+    },
+    {
+      "id": 26,
+      "category": "why",
+      "question": "علاش الناس تكذب على بعضها؟",
+      "difficulty": "medium",
+      "spicyLevel": 2
+    },
+    {
+      "id": 27,
+      "category": "why",
+      "question": "علاش تخاف من الإلتزام في علاقة؟",
+      "difficulty": "hard",
+      "spicyLevel": 4
+    },
+    {
+      "id": 28,
+      "category": "why",
+      "question": "علاش ساعات نحسو بالوحدة رغم أني معمرين بالناس؟",
+      "difficulty": "hard",
+      "spicyLevel": 3
+    },
+    {
+      "id": 29,
+      "category": "why",
+      "question": "علاش الحب الأول ما ينسيش؟",
+      "difficulty": "medium",
+      "spicyLevel": 3
+    },
+    {
+      "id": 30,
+      "category": "why",
+      "question": "علاش تخبي مشاعرك على الناس؟",
+      "difficulty": "medium",
+      "spicyLevel": 3
+    },
+    {
+      "id": 31,
+      "category": "wouldyou",
+      "question": "تختار: فلوس برشا ولا حب حقيقي؟",
+      "difficulty": "easy",
+      "spicyLevel": 1
+    },
+    {
+      "id": 32,
+      "category": "wouldyou",
+      "question": "تختار: تعرف المستقبل ولا ترجع للماضي؟",
+      "difficulty": "easy",
+      "spicyLevel": 1
+    },
+    {
+      "id": 33,
+      "category": "wouldyou",
+      "question": "تختار: تعيش 1000 سنة ولا تعيش حياتك مرة أخرى؟",
+      "difficulty": "medium",
+      "spicyLevel": 2
+    },
+    {
+      "id": 34,
+      "category": "wouldyou",
+      "question": "تختار: تخسر الذاكرة ولا تخسر الأمل؟",
+      "difficulty": "hard",
+      "spicyLevel": 3
+    },
+    {
+      "id": 35,
+      "category": "wouldyou",
+      "question": "تختار: الشهرة ولا الراحة النفسية؟",
+      "difficulty": "easy",
+      "spicyLevel": 1
+    },
+    {
+      "id": 36,
+      "category": "daring",
+      "question": "شكون الي معجبك هوني توا؟",
+      "difficulty": "hard",
+      "spicyLevel": 5
+    },
+    {
+      "id": 37,
+      "category": "daring",
+      "question": "عمرك حبيت زوج ناس في نفس الوقت؟",
+      "difficulty": "hard",
+      "spicyLevel": 4
+    },
+    {
+      "id": 38,
+      "category": "personal",
+      "question": "شنوة أكبر خوف عندك في الحياة؟",
+      "difficulty": "medium",
+      "spicyLevel": 3
+    },
+    {
+      "id": 39,
+      "category": "personal",
+      "question": "شكون الشخص الي تثق فيه أكثر حاجة؟",
+      "difficulty": "easy",
+      "spicyLevel": 2
+    },
+    {
+      "id": 40,
+      "category": "thinking",
+      "question": "شنوة الحاجة الي تعملها لو ما كانش فما قانون؟",
+      "difficulty": "hard",
+      "spicyLevel": 4
+    },
+    {
+      "id": 41,
+      "category": "thinking",
+      "question": "كيفاش تتصرف كي تحس أنك فشلت؟",
+      "difficulty": "medium",
+      "spicyLevel": 2
+    },
+    {
+      "id": 42,
+      "category": "whatif",
+      "question": "لو كان تنجم تقرا أفكار الناس، تحب؟",
+      "difficulty": "medium",
+      "spicyLevel": 3
+    },
+    {
+      "id": 43,
+      "category": "whatif",
+      "question": "لو كان تنجم تكون غير مرئي، وين تمشي أول حاجة؟",
+      "difficulty": "medium",
+      "spicyLevel": 4
+    },
+    {
+      "id": 44,
+      "category": "truth",
+      "question": "عمرك حسيت أنك ما تستاهلش الحب؟",
+      "difficulty": "hard",
+      "spicyLevel": 4
+    },
+    {
+      "id": 45,
+      "category": "truth",
+      "question": "تحب الناس تمدحك ولا تعيش بلا مدح؟",
+      "difficulty": "easy",
+      "spicyLevel": 1
+    },
+    {
+      "id": 46,
+      "category": "why",
+      "question": "علاش صعيب تقول 'آسف'؟",
+      "difficulty": "medium",
+      "spicyLevel": 3
+    },
+    {
+      "id": 47,
+      "category": "why",
+      "question": "علاش الناس تقارن روحها بالآخرين؟",
+      "difficulty": "medium",
+      "spicyLevel": 2
+    },
+    {
+      "id": 48,
+      "category": "wouldyou",
+      "question": "تختار: تكون الأذكى ولا الأجمل؟",
+      "difficulty": "easy",
+      "spicyLevel": 1
+    },
+    {
+      "id": 49,
+      "category": "wouldyou",
+      "question": "تختار: تخسر كل ذكرياتك ولا كل فلوسك؟",
+      "difficulty": "medium",
+      "spicyLevel": 3
+    },
+    {
+      "id": 50,
+      "category": "memories",
+      "question": "شنوة أحلى ذكرى في طفولتك؟",
+      "difficulty": "easy",
+      "spicyLevel": 1
+    },
+    {
+      "id": 51,
+      "category": "memories",
+      "question": "وقتاش آخر مرة بكيت من الفرحة؟",
+      "difficulty": "easy",
+      "spicyLevel": 2
+    },
+    {
+      "id": 52,
+      "category": "memories",
+      "question": "قول على موقف ما تنجمش تنساه أبداً",
+      "difficulty": "medium",
+      "spicyLevel": 3
+    },
+    {
+      "id": 53,
+      "category": "memories",
+      "question": "شنوة أكثر هدية فرحتك في حياتك؟",
+      "difficulty": "easy",
+      "spicyLevel": 1
+    },
+    {
+      "id": 54,
+      "category": "memories",
+      "question": "شكون الشخص الي أثر فيك أكثر حاجة؟",
+      "difficulty": "medium",
+      "spicyLevel": 2
+    },
+    {
+      "id": 55,
+      "category": "memories",
+      "question": "شنوة أول حب في حياتك؟ قول التفاصيل",
+      "difficulty": "hard",
+      "spicyLevel": 4
+    },
+    {
+      "id": 56,
+      "category": "secrets",
+      "question": "شنوة السر الي ما قلتوش لحد قبل؟",
+      "difficulty": "hard",
+      "spicyLevel": 5
+    },
+    {
+      "id": 57,
+      "category": "secrets",
+      "question": "عمرك عملت حاجة وحشمت توا؟",
+      "difficulty": "medium",
+      "spicyLevel": 4
+    },
+    {
+      "id": 58,
+      "category": "secrets",
+      "question": "شنوة الحاجة الي تخبيها على الكل؟",
+      "difficulty": "hard",
+      "spicyLevel": 5
+    },
+    {
+      "id": 59,
+      "category": "secrets",
+      "question": "عندك crush سري؟ شكون؟",
+      "difficulty": "medium",
+      "spicyLevel": 4
+    },
+    {
+      "id": 60,
+      "category": "secrets",
+      "question": "شنوة أكبر غلطة عملتها وما قلتهاش لحد؟",
+      "difficulty": "hard",
+      "spicyLevel": 5
+    },
+    {
+      "id": 61,
+      "category": "challenge",
+      "question": "قلد واحد من هوني وخلي الباقي يخمنو شكون",
+      "difficulty": "medium",
+      "spicyLevel": 3
+    },
+    {
+      "id": 62,
+      "category": "challenge",
+      "question": "اعمل رقصة توا قدام الكل!",
+      "difficulty": "easy",
+      "spicyLevel": 2
+    },
+    {
+      "id": 63,
+      "category": "challenge",
+      "question": "قول كومبليمان لكل واحد في الطاولة",
+      "difficulty": "easy",
+      "spicyLevel": 1
+    },
+    {
+      "id": 64,
+      "category": "challenge",
+      "question": "غني أغنية بدون موسيقى",
+      "difficulty": "medium",
+      "spicyLevel": 2
+    },
+    {
+      "id": 65,
+      "category": "challenge",
+      "question": "احكي نكتة، لازم الكل يضحك!",
+      "difficulty": "medium",
+      "spicyLevel": 2
+    },
+    {
+      "id": 66,
+      "category": "crazy",
+      "question": "لو كان تحول لحيوان، شنوة تختار وعلاش؟",
+      "difficulty": "easy",
+      "spicyLevel": 1
+    },
+    {
+      "id": 67,
+      "category": "crazy",
+      "question": "شنوة أغرب حلم حلمت بيه؟",
+      "difficulty": "easy",
+      "spicyLevel": 2
+    },
+    {
+      "id": 68,
+      "category": "crazy",
+      "question": "لو كان تحكم العالم ليوم واحد، شنوة أول حاجة تعملها؟",
+      "difficulty": "medium",
+      "spicyLevel": 2
+    },
+    {
+      "id": 69,
+      "category": "crazy",
+      "question": "اخترع لغتك الخاصة وعلم الباقي كلمة",
+      "difficulty": "hard",
+      "spicyLevel": 3
+    },
+    {
+      "id": 70,
+      "category": "crazy",
+      "question": "لو كان حياتك فيلم، شنوة يكون اسمه؟",
+      "difficulty": "medium",
+      "spicyLevel": 2
+    }
+  ]
+}

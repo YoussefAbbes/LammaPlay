@@ -14,6 +14,7 @@ import 'package:lamaplay/screens/question_player_screen.dart';
 import 'package:lamaplay/screens/question_reveal_screen.dart';
 import 'package:lamaplay/screens/question_leaderboard_screen.dart';
 import 'package:lamaplay/screens/podium_screen.dart';
+import 'package:lamaplay/screens/global_leaderboard_screen.dart';
 
 /// Centralized app routes.
 class AppRouter {
@@ -31,6 +32,7 @@ class AppRouter {
   static const String questionReveal = '/questionReveal';
   static const String questionLeaderboard = '/questionLeaderboard';
   static const String podium = '/podium';
+  static const String globalLeaderboard = '/globalLeaderboard';
 
   static Route<dynamic> onGenerateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -172,6 +174,11 @@ class AppRouter {
             }
             return PodiumScreen(sessionId: sessionId);
           },
+          settings: settings,
+        );
+      case globalLeaderboard:
+        return MaterialPageRoute(
+          builder: (_) => const GlobalLeaderboardScreen(),
           settings: settings,
         );
       default:

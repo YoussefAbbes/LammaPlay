@@ -53,6 +53,13 @@ service cloud.firestore {
         allow read: if true;
         allow write: if isAuthed() && request.auth.uid == get(/databases/$(database)/documents/sessions/$(sessionId)).data.hostId;
       }
+      
+      // Hrissa Cards votes subcollection
+      match /hrissaVotes/{voteId} {
+        allow read: if true;
+        allow create: if isAuthed();
+        allow delete: if isAuthed() && request.auth.uid == get(/databases/$(database)/documents/sessions/$(sessionId)).data.hostId;
+      }
     }
     
     // ===== LEGACY ROOM SYSTEM =====

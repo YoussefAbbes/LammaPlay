@@ -1,0 +1,89 @@
+{
+  "meta": {
+    "title": "💻 Technology & Innovation",
+    "description": "Test your tech knowledge! From programming to gadgets and innovations.",
+    "category": "Technology",
+    "difficulty": "Medium",
+    "totalQuestions": 10
+  },
+  "questions": [
+    {
+      "index": 0,
+      "type": "mcq",
+      "text": "Who is considered the father of modern computing?",
+      "options": ["Steve Jobs", "Bill Gates", "Alan Turing", "Tim Berners-Lee"],
+      "correctIndex": 2,
+      "timeLimitSeconds": 20
+    },
+    {
+      "index": 1,
+      "type": "tf",
+      "text": "HTML stands for HyperText Markup Language.",
+      "options": ["True", "False"],
+      "correctIndex": 0,
+      "timeLimitSeconds": 15
+    },
+    {
+      "index": 2,
+      "type": "mcq",
+      "text": "What does CPU stand for?",
+      "options": ["Central Processing Unit", "Computer Personal Unit", "Central Processor Utility", "Core Processing Unit"],
+      "correctIndex": 0,
+      "timeLimitSeconds": 20
+    },
+    {
+      "index": 3,
+      "type": "numeric",
+      "text": "How many bits are in a byte?",
+      "numericAnswer": 8,
+      "timeLimitSeconds": 15
+    },
+    {
+      "index": 4,
+      "type": "mcq",
+      "text": "Which company created the iPhone?",
+      "options": ["Samsung", "Google", "Apple", "Microsoft"],
+      "correctIndex": 2,
+      "timeLimitSeconds": 15
+    },
+    {
+      "index": 5,
+      "type": "tf",
+      "text": "Python is a type of snake and a programming language.",
+      "options": ["True", "False"],
+      "correctIndex": 0,
+      "timeLimitSeconds": 15
+    },
+    {
+      "index": 6,
+      "type": "mcq",
+      "text": "What does WWW stand for in a website URL?",
+      "options": ["World Wide Web", "World Web Wide", "Web World Wide", "Wide World Web"],
+      "correctIndex": 0,
+      "timeLimitSeconds": 20
+    },
+    {
+      "index": 7,
+      "type": "mcq",
+      "text": "Which programming language is known for its use in web development?",
+      "options": ["C++", "JavaScript", "Assembly", "Fortran"],
+      "correctIndex": 1,
+      "timeLimitSeconds": 20
+    },
+    {
+      "index": 8,
+      "type": "numeric",
+      "text": "In what year was Facebook founded?",
+      "numericAnswer": 2004,
+      "timeLimitSeconds": 20
+    },
+    {
+      "index": 9,
+      "type": "tf",
+      "text": "USB stands for Universal Serial Bus.",
+      "options": ["True", "False"],
+      "correctIndex": 0,
+      "timeLimitSeconds": 15
+    }
+  ]
+}

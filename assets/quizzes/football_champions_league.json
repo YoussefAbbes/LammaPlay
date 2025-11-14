@@ -1,0 +1,89 @@
+{
+  "meta": {
+    "title": "⚽ UEFA Champions League Masters",
+    "description": "Test your knowledge about the most prestigious club competition in European football",
+    "category": "Sports",
+    "difficulty": "Hard",
+    "totalQuestions": 10
+  },
+  "questions": [
+    {
+      "index": 0,
+      "type": "mcq",
+      "text": "Which club has won the most UEFA Champions League titles?",
+      "options": ["Barcelona", "Real Madrid", "AC Milan", "Bayern Munich"],
+      "correctIndex": 1,
+      "timeLimitSeconds": 20
+    },
+    {
+      "index": 1,
+      "type": "mcq",
+      "text": "Who scored the fastest hat-trick in Champions League history (11 minutes)?",
+      "options": ["Cristiano Ronaldo", "Lionel Messi", "Bafetimbi Gomis", "Marco Simone"],
+      "correctIndex": 2,
+      "timeLimitSeconds": 20
+    },
+    {
+      "index": 2,
+      "type": "numeric",
+      "text": "How many goals did Cristiano Ronaldo score in the Champions League? (As of 2024)",
+      "correctValue": 140,
+      "timeLimitSeconds": 20
+    },
+    {
+      "index": 3,
+      "type": "tf",
+      "text": "Manchester United won the Champions League final in 1999 after being 1-0 down until the 91st minute.",
+      "options": ["True", "False"],
+      "correctIndex": 0,
+      "timeLimitSeconds": 20
+    },
+    {
+      "index": 4,
+      "type": "mcq",
+      "text": "Which player has won the most Champions League titles?",
+      "options": ["Cristiano Ronaldo (5)", "Paco Gento (6)", "Karim Benzema (5)", "Paolo Maldini (5)"],
+      "correctIndex": 1,
+      "timeLimitSeconds": 20
+    },
+    {
+      "index": 5,
+      "type": "mcq",
+      "text": "Liverpool famously came back from 3-0 down to win the 2005 final against which team?",
+      "options": ["Bayern Munich", "AC Milan", "Inter Milan", "Juventus"],
+      "correctIndex": 1,
+      "timeLimitSeconds": 20
+    },
+    {
+      "index": 6,
+      "type": "numeric",
+      "text": "In which year was the European Cup rebranded as the UEFA Champions League?",
+      "correctValue": 1992,
+      "timeLimitSeconds": 20
+    },
+    {
+      "index": 7,
+      "type": "mcq",
+      "text": "Who is the oldest player to score in a Champions League final?",
+      "options": ["Paolo Maldini", "Didier Drogba", "Ryan Giggs", "Francesco Totti"],
+      "correctIndex": 0,
+      "timeLimitSeconds": 20
+    },
+    {
+      "index": 8,
+      "type": "tf",
+      "text": "No team has ever won three consecutive Champions League titles since the rebranding in 1992.",
+      "options": ["True", "False"],
+      "correctIndex": 1,
+      "timeLimitSeconds": 20
+    },
+    {
+      "index": 9,
+      "type": "mcq",
+      "text": "Which goalkeeper holds the record for most clean sheets in Champions League history?",
+      "options": ["Iker Casillas", "Manuel Neuer", "Gianluigi Buffon", "Petr Čech"],
+      "correctIndex": 0,
+      "timeLimitSeconds": 20
+    }
+  ]
+}

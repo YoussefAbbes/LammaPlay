@@ -41,6 +41,7 @@ class QuizRepository {
       'createdBy': meta.createdBy,
       'createdAt': FieldValue.serverTimestamp(),
       'visibility': meta.visibility,
+      'gameMode': meta.gameMode,
     });
     final batch = _db.batch();
     for (var i = 0; i < questions.length; i++) {

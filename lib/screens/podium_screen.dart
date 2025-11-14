@@ -2,16 +2,57 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:lamaplay/widgets/answer_feedback.dart';
+import 'package:lamaplay/services/global_leaderboard_service.dart';
 
-class PodiumScreen extends StatelessWidget {
+class PodiumScreen extends StatefulWidget {
   final String sessionId;
   const PodiumScreen({super.key, required this.sessionId});
+
+  @override
+  State<PodiumScreen> createState() => _PodiumScreenState();
+}
+
+class _PodiumScreenState extends State<PodiumScreen> {
+  final _globalLeaderboard = GlobalLeaderboardService();
+  bool _globalStatsUpdated = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _updateGlobalStats();
+  }
+
+  Future<void> _updateGlobalStats() async {
+    if (_globalStatsUpdated) return;
+
+    try {
+      final sessionRef = FirebaseFirestore.instance
+          .collection('sessions')
+          .doc(widget.sessionId);
+      final playersSnap = await sessionRef.collection('players').get();
+
+      for (final playerDoc in playersSnap.docs) {
+        final data = playerDoc.data();
+        await _globalLeaderboard.updateGlobalStats(
+          playerId: playerDoc.id,
+          nickname: data['nickname'] ?? 'Player',
+          sessionScore: (data['score'] as num?)?.toInt() ?? 0,
+          correctAnswers: (data['correctAnswers'] as num?)?.toInt() ?? 0,
+          totalAnswers: (data['totalAnswers'] as num?)?.toInt() ?? 0,
+        );
+      }
+
+      _globalStatsUpdated = true;
+    } catch (e) {
+      print('Error updating global stats: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final sessionRef = FirebaseFirestore.instance
         .collection('sessions')
-        .doc(sessionId);
+        .doc(widget.sessionId);
     final playersRef = sessionRef.collection('players');
 
     return StreamBuilder(
@@ -30,6 +71,10 @@ class PodiumScreen extends StatelessWidget {
                         'name': d.data()['nickname'] ?? d.id.substring(0, 6),
                         'score': (d.data()['score'] as num? ?? 0).toInt(),
                         'streak': (d.data()['streak'] as num? ?? 0).toInt(),
+                        'correctAnswers':
+                            (d.data()['correctAnswers'] as num? ?? 0).toInt(),
+                        'totalAnswers': (d.data()['totalAnswers'] as num? ?? 0)
+                            .toInt(),
                       },
                     )
                     .toList()
@@ -41,28 +86,47 @@ class PodiumScreen extends StatelessWidget {
             return Scaffold(
               backgroundColor: Colors.grey[50],
               appBar: AppBar(
-                title: const Row(
-                  children: [
-                    Text('🏆 '),
-                    Text(
-                      'Final Results',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 0.5,
-                      ),
-                    ),
-                  ],
-                ),
+                title:
+                    Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(0.2),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: const Text(
+                                '🎉',
+                                style: TextStyle(fontSize: 24),
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            const Text(
+                              'Victory!',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w900,
+                                letterSpacing: 1,
+                                fontSize: 28,
+                              ),
+                            ),
+                          ],
+                        )
+                        .animate(
+                          onPlay: (controller) =>
+                              controller.repeat(reverse: true),
+                        )
+                        .shimmer(duration: 2000.ms),
                 elevation: 0,
                 flexibleSpace: Container(
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     gradient: LinearGradient(
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                       colors: [
-                        Colors.purple[600]!,
-                        Colors.purple[400]!,
-                        Colors.deepPurple[400]!,
+                        Color(0xFFFF6B6B),
+                        Color(0xFFFFD93D),
+                        Color(0xFF6BCB77),
+                        Color(0xFF4D96FF),
                       ],
                     ),
                   ),
@@ -82,31 +146,54 @@ class PodiumScreen extends StatelessWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
-                              // Quiz name
-                              Center(
-                                    child: Text(
-                                      'Quiz Complete!',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .headlineSmall
-                                          ?.copyWith(
-                                            fontWeight: FontWeight.bold,
+                              // Quiz complete banner
+                              Container(
+                                    padding: const EdgeInsets.all(24),
+                                    decoration: BoxDecoration(
+                                      gradient: LinearGradient(
+                                        colors: [
+                                          Colors.amber.shade400,
+                                          Colors.orange.shade400,
+                                        ],
+                                      ),
+                                      borderRadius: BorderRadius.circular(20),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.orange.withOpacity(0.4),
+                                          blurRadius: 20,
+                                          spreadRadius: 5,
+                                        ),
+                                      ],
+                                    ),
+                                    child: Column(
+                                      children: [
+                                        const Text(
+                                          '✨ GAME OVER ✨',
+                                          style: TextStyle(
+                                            fontSize: 32,
+                                            fontWeight: FontWeight.w900,
+                                            color: Colors.white,
+                                            letterSpacing: 2,
                                           ),
+                                        ),
+                                        const SizedBox(height: 8),
+                                        Text(
+                                          '${players.length} epic player${players.length != 1 ? 's' : ''} battled! 🔥',
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            color: Colors.white.withOpacity(
+                                              0.95,
+                                            ),
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   )
                                   .animate()
                                   .fadeIn(duration: 600.ms)
-                                  .slideY(begin: -0.3, end: 0),
-                              const SizedBox(height: 8),
-                              Center(
-                                child: Text(
-                                  '${players.length} player${players.length != 1 ? 's' : ''} competed',
-                                  style: Theme.of(context).textTheme.bodyLarge,
-                                ),
-                              ).animate().fadeIn(
-                                delay: 200.ms,
-                                duration: 600.ms,
-                              ),
+                                  .slideY(begin: -0.3, end: 0)
+                                  .shimmer(delay: 600.ms, duration: 1500.ms),
                               const SizedBox(height: 24),
 
                               // Top 3 podium
@@ -182,9 +269,26 @@ class PodiumScreen extends StatelessWidget {
                                                           : FontWeight.normal,
                                                     ),
                                                   ),
-                                                  subtitle:
-                                                      p['streak'] as int > 2
-                                                      ? Text(
+                                                  subtitle: Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    mainAxisSize:
+                                                        MainAxisSize.min,
+                                                    children: [
+                                                      Text(
+                                                        '✅ ${p['correctAnswers']}/${p['totalAnswers']} correct',
+                                                        style: TextStyle(
+                                                          color:
+                                                              Colors.green[700],
+                                                          fontSize: 12,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                        ),
+                                                      ),
+                                                      if (p['streak'] as int >
+                                                          2)
+                                                        Text(
                                                           '🔥 ${p['streak']} streak',
                                                           style:
                                                               const TextStyle(
@@ -193,9 +297,11 @@ class PodiumScreen extends StatelessWidget {
                                                                 fontWeight:
                                                                     FontWeight
                                                                         .bold,
+                                                                fontSize: 12,
                                                               ),
-                                                        )
-                                                      : null,
+                                                        ),
+                                                    ],
+                                                  ),
                                                   trailing: Row(
                                                     mainAxisSize:
                                                         MainAxisSize.min,
@@ -250,46 +356,46 @@ class PodiumScreen extends StatelessWidget {
 
                               const SizedBox(height: 16),
 
-                              // Action buttons
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: OutlinedButton.icon(
-                                      onPressed: () {
-                                        Navigator.of(
-                                          context,
-                                        ).popUntil((route) => route.isFirst);
-                                      },
-                                      icon: const Icon(Icons.home),
-                                      label: const Text('Exit'),
-                                      style: OutlinedButton.styleFrom(
-                                        padding: const EdgeInsets.symmetric(
-                                          vertical: 16,
-                                        ),
-                                      ),
+                              // Action button
+                              SizedBox(
+                                width: double.infinity,
+                                child: ElevatedButton.icon(
+                                  onPressed: () async {
+                                    // Clean up session before leaving
+                                    try {
+                                      await sessionRef.update({
+                                        'status': 'completed',
+                                        'completedAt':
+                                            FieldValue.serverTimestamp(),
+                                      });
+                                    } catch (e) {
+                                      // Ignore cleanup errors
+                                    }
+
+                                    if (context.mounted) {
+                                      // Navigate to home and remove all previous routes
+                                      Navigator.of(
+                                        context,
+                                      ).pushNamedAndRemoveUntil(
+                                        '/',
+                                        (route) => false,
+                                      );
+                                    }
+                                  },
+                                  icon: const Icon(Icons.home),
+                                  label: const Text('Exit to Home'),
+                                  style: ElevatedButton.styleFrom(
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 18,
+                                    ),
+                                    backgroundColor: Colors.purple,
+                                    foregroundColor: Colors.white,
+                                    elevation: 4,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
                                     ),
                                   ),
-                                  const SizedBox(width: 12),
-                                  Expanded(
-                                    child: ElevatedButton.icon(
-                                      onPressed: () {
-                                        // Navigate back to lobby with same quiz
-                                        Navigator.of(
-                                          context,
-                                        ).popUntil((route) => route.isFirst);
-                                      },
-                                      icon: const Icon(Icons.refresh),
-                                      label: const Text('Play Again'),
-                                      style: ElevatedButton.styleFrom(
-                                        padding: const EdgeInsets.symmetric(
-                                          vertical: 16,
-                                        ),
-                                        backgroundColor: Colors.purple,
-                                        foregroundColor: Colors.white,
-                                      ),
-                                    ),
-                                  ),
-                                ],
+                                ),
                               ),
                             ],
                           ),

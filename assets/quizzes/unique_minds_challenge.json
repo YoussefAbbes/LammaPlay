@@ -1,0 +1,92 @@
+{
+  "meta": {
+    "title": "Unique Minds - Think Different!",
+    "description": "Only unique answers score! Think outside the box and avoid what others might choose. Be creative!",
+    "category": "Strategy",
+    "difficulty": "Hard",
+    "gameMode": "uniqueAnswer",
+    "totalQuestions": 10
+  },
+  "questions": [
+    {
+      "index": 0,
+      "type": "mcq",
+      "text": "Pick your favorite color (be unique!)",
+      "options": ["Red", "Blue", "Green", "Yellow", "Purple", "Orange", "Pink", "Black"],
+      "correctIndex": 0,
+      "timeLimitSeconds": 20
+    },
+    {
+      "index": 1,
+      "type": "mcq",
+      "text": "Choose a number between 1-10",
+      "options": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"],
+      "correctIndex": 4,
+      "timeLimitSeconds": 20
+    },
+    {
+      "index": 2,
+      "type": "mcq",
+      "text": "Pick a pizza topping (think unique!)",
+      "options": ["Pepperoni", "Mushrooms", "Olives", "Pineapple", "Anchovies", "Jalapeños"],
+      "correctIndex": 4,
+      "timeLimitSeconds": 20
+    },
+    {
+      "index": 3,
+      "type": "mcq",
+      "text": "Choose a season",
+      "options": ["Spring", "Summer", "Fall", "Winter"],
+      "correctIndex": 2,
+      "timeLimitSeconds": 15
+    },
+    {
+      "index": 4,
+      "type": "mcq",
+      "text": "Pick a superpower",
+      "options": ["Flying", "Invisibility", "Super strength", "Telepathy", "Time travel", "Teleportation"],
+      "correctIndex": 3,
+      "timeLimitSeconds": 20
+    },
+    {
+      "index": 5,
+      "type": "mcq",
+      "text": "Choose a pet",
+      "options": ["Dog", "Cat", "Bird", "Fish", "Hamster", "Rabbit", "Snake", "Lizard"],
+      "correctIndex": 5,
+      "timeLimitSeconds": 20
+    },
+    {
+      "index": 6,
+      "type": "mcq",
+      "text": "Pick a vacation destination",
+      "options": ["Beach", "Mountains", "City", "Desert", "Forest", "Island"],
+      "correctIndex": 3,
+      "timeLimitSeconds": 20
+    },
+    {
+      "index": 7,
+      "type": "mcq",
+      "text": "Choose a movie genre",
+      "options": ["Action", "Comedy", "Horror", "Romance", "Sci-Fi", "Drama", "Thriller"],
+      "correctIndex": 4,
+      "timeLimitSeconds": 20
+    },
+    {
+      "index": 8,
+      "type": "mcq",
+      "text": "Pick a breakfast food",
+      "options": ["Pancakes", "Cereal", "Eggs", "Toast", "Yogurt", "Fruit", "Bagel"],
+      "correctIndex": 5,
+      "timeLimitSeconds": 20
+    },
+    {
+      "index": 9,
+      "type": "mcq",
+      "text": "Choose a music genre",
+      "options": ["Pop", "Rock", "Hip-Hop", "Jazz", "Classical", "Electronic", "Country"],
+      "correctIndex": 3,
+      "timeLimitSeconds": 20
+    }
+  ]
+}

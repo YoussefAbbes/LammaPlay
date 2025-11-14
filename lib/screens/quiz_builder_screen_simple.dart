@@ -10,6 +10,7 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:lamaplay/services/sound_service.dart';
 
 /// Simplified quiz builder for quick quiz creation
 class QuizBuilderScreenSimple extends StatefulWidget {
@@ -31,6 +32,7 @@ class _QuizBuilderScreenSimpleState extends State<QuizBuilderScreenSimple> {
   int _keyCounter = 0; // Counter to ensure unique keys
   bool _saving = false;
   String? _error;
+  String _selectedGameMode = 'standard';
 
   @override
   void initState() {
@@ -82,6 +84,23 @@ class _QuizBuilderScreenSimpleState extends State<QuizBuilderScreenSimple> {
         numericAnswer: '4',
       );
     });
+  }
+
+  String _getGameModeDescription(String mode) {
+    switch (mode) {
+      case 'uniqueAnswer':
+        return 'Players only score points if their correct answer is unique (no one else picked it). Unique answers get 50% bonus!';
+      case 'majorityRules':
+        return 'الأغلبية: Follow the crowd to win! Players who pick the same correct answer as the majority get bonus points. The bigger the majority, the higher the score!';
+      case 'liar':
+        return 'الكذاب: Each player shares 3 statements - 2 truths and 1 lie. Others vote on which is the lie. Fool people to score, guess correctly to earn points!';
+      case 'truthOrDare':
+        return 'Classic party game! Players choose between answering personal truths or completing fun dares.';
+      case 'hrissa':
+        return 'Tunisian hot seat! One player faces spicy questions while others vote. Heat levels indicate question intensity 🌶️';
+      default:
+        return '';
+    }
   }
 
   void _addQuestion() {
@@ -136,17 +155,27 @@ class _QuizBuilderScreenSimpleState extends State<QuizBuilderScreenSimple> {
         createdBy: _auth.uid ?? 'anonymous',
         createdAt: DateTime.now(),
         visibility: 'public',
+        gameMode: _selectedGameMode,
       );
 
       await _quizRepo.createQuiz(meta, questionsData);
 
       if (mounted) {
+        SoundService().play(SoundEffect.celebration);
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('✅ Quiz created successfully!')),
+          SnackBar(
+            content: const Text('✅ Quiz created successfully!'),
+            backgroundColor: Colors.green[600],
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
         );
         Navigator.pop(context);
       }
     } catch (e) {
+      SoundService().play(SoundEffect.error);
       setState(() {
         _error = 'Failed to save quiz: $e';
         _saving = false;
@@ -154,119 +183,296 @@ class _QuizBuilderScreenSimpleState extends State<QuizBuilderScreenSimple> {
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Create Quiz'),
+  Future<bool> _onWillPop() async {
+    if (_saving) return false; // Don't allow back during save
+
+    // Show confirmation dialog
+    final shouldPop = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('⚠️ Discard Quiz?'),
+        content: const Text(
+          'You haven\'t saved your quiz yet. All changes will be lost. Are you sure you want to leave?',
+        ),
         actions: [
-          TextButton.icon(
-            onPressed: _saving ? null : _saveQuiz,
-            icon: _saving
-                ? const SizedBox(
-                    width: 16,
-                    height: 16,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  )
-                : const Icon(Icons.save),
-            label: const Text('Save Quiz'),
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Continue Editing'),
           ),
-          const SizedBox(width: 8),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            style: TextButton.styleFrom(foregroundColor: Colors.red),
+            child: const Text('Discard'),
+          ),
         ],
       ),
-      body: Form(
-        key: _formKey,
-        child: ListView(
-          padding: const EdgeInsets.all(24),
-          children: [
-            // Quiz metadata
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Quiz Information',
-                      style: Theme.of(context).textTheme.titleLarge,
-                    ),
-                    const SizedBox(height: 16),
-                    TextFormField(
-                      controller: _titleController,
-                      decoration: const InputDecoration(
-                        labelText: 'Quiz Title *',
-                        hintText: 'e.g., World Geography Challenge',
-                        prefixIcon: Icon(Icons.title),
-                        border: OutlineInputBorder(),
-                      ),
-                      validator: (v) => v!.trim().isEmpty ? 'Required' : null,
-                    ),
-                    const SizedBox(height: 16),
-                    TextFormField(
-                      controller: _descriptionController,
-                      decoration: const InputDecoration(
-                        labelText: 'Description (optional)',
-                        hintText: 'Brief description of your quiz',
-                        prefixIcon: Icon(Icons.description),
-                        border: OutlineInputBorder(),
-                      ),
-                      maxLines: 3,
-                    ),
-                  ],
-                ),
-              ),
+    );
+
+    return shouldPop ?? false;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (didPop) async {
+        if (didPop) return;
+        final shouldPop = await _onWillPop();
+        if (shouldPop && context.mounted) {
+          Navigator.pop(context);
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Create Quiz'),
+          actions: [
+            TextButton.icon(
+              onPressed: _saving ? null : _saveQuiz,
+              icon: _saving
+                  ? const SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : const Icon(Icons.save),
+              label: const Text('Save Quiz'),
             ),
-            const SizedBox(height: 24),
-
-            // Questions header
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Questions (${_questionKeys.length})',
-                  style: Theme.of(context).textTheme.titleLarge,
-                ),
-                FilledButton.icon(
-                  onPressed: _addQuestion,
-                  icon: const Icon(Icons.add),
-                  label: const Text('Add Question'),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-
-            // Questions
-            ..._questionKeys.asMap().entries.map((entry) {
-              final index = entry.key;
-              final questionKey = entry.value;
-              return Padding(
-                key: ValueKey(questionKey),
-                padding: const EdgeInsets.only(bottom: 24),
-                child: _QuestionBuilder(
-                  key: questionKey,
-                  index: index,
-                  onRemove: () => _removeQuestion(index),
-                ),
-              );
-            }),
-
-            // Error message
-            if (_error != null) ...[
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.red.shade100,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Text(
-                  _error!,
-                  style: TextStyle(color: Colors.red.shade700),
-                ),
-              ),
-            ],
+            const SizedBox(width: 8),
           ],
         ),
-      ),
+        body: Form(
+          key: _formKey,
+          child: ListView(
+            padding: const EdgeInsets.all(24),
+            children: [
+              // Quiz metadata
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Quiz Information',
+                        style: Theme.of(context).textTheme.titleLarge,
+                      ),
+                      const SizedBox(height: 16),
+                      TextFormField(
+                        controller: _titleController,
+                        decoration: const InputDecoration(
+                          labelText: 'Quiz Title *',
+                          hintText: 'e.g., World Geography Challenge',
+                          prefixIcon: Icon(Icons.title),
+                          border: OutlineInputBorder(),
+                        ),
+                        validator: (v) => v!.trim().isEmpty ? 'Required' : null,
+                      ),
+                      const SizedBox(height: 16),
+                      TextFormField(
+                        controller: _descriptionController,
+                        decoration: const InputDecoration(
+                          labelText: 'Description (optional)',
+                          hintText: 'Brief description of your quiz',
+                          prefixIcon: Icon(Icons.description),
+                          border: OutlineInputBorder(),
+                        ),
+                        maxLines: 3,
+                      ),
+                      const SizedBox(height: 16),
+                      DropdownButtonFormField<String>(
+                        value: _selectedGameMode,
+                        decoration: const InputDecoration(
+                          labelText: 'Game Mode',
+                          prefixIcon: Icon(Icons.gamepad),
+                          border: OutlineInputBorder(),
+                        ),
+                        items: const [
+                          DropdownMenuItem(
+                            value: 'standard',
+                            child: Row(
+                              children: [
+                                Text('🎯 Standard'),
+                                SizedBox(width: 8),
+                                Text(
+                                  '- Classic quiz mode',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          DropdownMenuItem(
+                            value: 'uniqueAnswer',
+                            child: Row(
+                              children: [
+                                Text('🧠 Unique Answer'),
+                                SizedBox(width: 8),
+                                Text(
+                                  '- Only unique answers score',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          DropdownMenuItem(
+                            value: 'majorityRules',
+                            child: Row(
+                              children: [
+                                Text('🎯 Majority Rules'),
+                                SizedBox(width: 8),
+                                Text(
+                                  '- Conformity wins!',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          DropdownMenuItem(
+                            value: 'liar',
+                            child: Row(
+                              children: [
+                                Text('🤥 The Liar'),
+                                SizedBox(width: 8),
+                                Text(
+                                  '- Two truths, one lie',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          DropdownMenuItem(
+                            value: 'truthOrDare',
+                            child: Row(
+                              children: [
+                                Text('🎭 Truth or Dare'),
+                                SizedBox(width: 8),
+                                Text(
+                                  '- Party game mode',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          DropdownMenuItem(
+                            value: 'hrissa',
+                            child: Row(
+                              children: [
+                                Text('🌶️ Hrissa'),
+                                SizedBox(width: 8),
+                                Text(
+                                  '- Hot seat challenge',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                        onChanged: (value) {
+                          setState(() {
+                            _selectedGameMode = value ?? 'standard';
+                          });
+                        },
+                      ),
+                      if (_selectedGameMode != 'standard') ...[
+                        const SizedBox(height: 12),
+                        Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: Colors.blue[50],
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(color: Colors.blue[200]!),
+                          ),
+                          child: Row(
+                            children: [
+                              const Icon(
+                                Icons.info_outline,
+                                size: 20,
+                                color: Colors.blue,
+                              ),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Text(
+                                  _getGameModeDescription(_selectedGameMode),
+                                  style: const TextStyle(fontSize: 13),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 24),
+
+              // Questions header
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Questions (${_questionKeys.length})',
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
+                  FilledButton.icon(
+                    onPressed: _addQuestion,
+                    icon: const Icon(Icons.add),
+                    label: const Text('Add Question'),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+
+              // Questions
+              ..._questionKeys.asMap().entries.map((entry) {
+                final index = entry.key;
+                final questionKey = entry.value;
+                return Padding(
+                  key: ValueKey(questionKey),
+                  padding: const EdgeInsets.only(bottom: 24),
+                  child: _QuestionBuilder(
+                    key: questionKey,
+                    index: index,
+                    onRemove: () => _removeQuestion(index),
+                  ),
+                );
+              }),
+
+              // Error message
+              if (_error != null) ...[
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.red.shade100,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    _error!,
+                    style: TextStyle(color: Colors.red.shade700),
+                  ),
+                ),
+              ],
+            ],
+          ),
+        ),
+      ), // PopScope
     );
   }
 }

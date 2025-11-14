@@ -1,0 +1,90 @@
+{
+  "meta": {
+    "title": "🎬 Pop Culture & Entertainment",
+    "description": "Movies, music, celebrities, and everything trending in pop culture!",
+    "category": "Entertainment",
+    "difficulty": "Medium",
+    "totalQuestions": 10
+  },
+  "questions": [
+    {
+      "index": 0,
+      "type": "mcq",
+      "text": "Which movie won the most Oscars in history?",
+      "options": ["Titanic", "Ben-Hur", "The Lord of the Rings: Return of the King", "All tied with 11"],
+      "correctIndex": 3,
+      "timeLimitSeconds": 25
+    },
+    {
+      "index": 1,
+      "type": "mcq",
+      "text": "Who is known as the 'King of Pop'?",
+      "options": ["Elvis Presley", "Michael Jackson", "Prince", "Madonna"],
+      "correctIndex": 1,
+      "timeLimitSeconds": 15
+    },
+    {
+      "index": 2,
+      "type": "tf",
+      "text": "The TV series 'Friends' had 10 seasons.",
+      "options": ["True", "False"],
+      "correctIndex": 0,
+      "timeLimitSeconds": 15
+    },
+    {
+      "index": 3,
+      "type": "mcq",
+      "text": "Which superhero is known as the 'Dark Knight'?",
+      "options": ["Superman", "Spider-Man", "Batman", "Iron Man"],
+      "correctIndex": 2,
+      "timeLimitSeconds": 15
+    },
+    {
+      "index": 4,
+      "type": "numeric",
+      "text": "How many Harry Potter movies are there?",
+      "numericAnswer": 8,
+      "timeLimitSeconds": 20
+    },
+    {
+      "index": 5,
+      "type": "mcq",
+      "text": "Which streaming service created 'Stranger Things'?",
+      "options": ["Disney+", "Netflix", "Amazon Prime", "HBO Max"],
+      "correctIndex": 1,
+      "timeLimitSeconds": 15
+    },
+    {
+      "index": 6,
+      "type": "tf",
+      "text": "Taylor Swift started her career as a country music singer.",
+      "options": ["True", "False"],
+      "correctIndex": 0,
+      "timeLimitSeconds": 15
+    },
+    {
+      "index": 7,
+      "type": "mcq",
+      "text": "Who directed the movie 'Inception'?",
+      "options": ["Steven Spielberg", "Christopher Nolan", "Quentin Tarantino", "Martin Scorsese"],
+      "correctIndex": 1,
+      "timeLimitSeconds": 20
+    },
+    {
+      "index": 8,
+      "type": "mcq",
+      "text": "Which band sang 'Bohemian Rhapsody'?",
+      "options": ["The Beatles", "Led Zeppelin", "Queen", "Pink Floyd"],
+      "correctIndex": 2,
+      "timeLimitSeconds": 15
+    },
+    {
+      "index": 9,
+      "type": "tf",
+      "text": "The Simpsons is the longest-running American animated series.",
+      "options": ["True", "False"],
+      "correctIndex": 0,
+      "timeLimitSeconds": 20
+    }
+  ]
+}

@@ -4,6 +4,8 @@ class Player {
   final String nickname;
   final String? avatar;
   final int score;
+  final int correctAnswers;
+  final int totalAnswers;
   final bool connected;
   final DateTime? lastSeen;
   final DateTime? createdAt;
@@ -15,6 +17,8 @@ class Player {
     required this.nickname,
     this.avatar,
     this.score = 0,
+    this.correctAnswers = 0,
+    this.totalAnswers = 0,
     this.connected = false,
     this.lastSeen,
     this.createdAt,
@@ -26,6 +30,8 @@ class Player {
     'nickname': nickname,
     'avatar': avatar,
     'score': score,
+    'correctAnswers': correctAnswers,
+    'totalAnswers': totalAnswers,
     'connected': connected,
     'lastSeen': lastSeen,
     'createdAt': createdAt,
@@ -38,6 +44,8 @@ class Player {
     nickname: json['nickname'] as String? ?? 'Player',
     avatar: json['avatar'] as String?,
     score: (json['score'] as num?)?.toInt() ?? 0,
+    correctAnswers: (json['correctAnswers'] as num?)?.toInt() ?? 0,
+    totalAnswers: (json['totalAnswers'] as num?)?.toInt() ?? 0,
     connected: json['connected'] as bool? ?? false,
     lastSeen: _ts(json['lastSeen']),
     createdAt: _ts(json['createdAt']),

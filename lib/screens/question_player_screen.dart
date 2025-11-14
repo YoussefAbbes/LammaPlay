@@ -2,8 +2,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:lamaplay/models/question.dart';
+import 'package:lamaplay/models/quiz.dart';
 import 'package:lamaplay/repositories/quiz_repository.dart';
 import 'package:lamaplay/state/answer_controller.dart';
+import 'package:lamaplay/services/sound_service.dart';
 
 class QuestionPlayerScreen extends StatefulWidget {
   final String sessionId;
@@ -54,9 +56,15 @@ class _QuestionPlayerScreenState extends State<QuestionPlayerScreen> {
         }
 
         return FutureBuilder(
-          future: _quizRepo.getQuestions(quizId),
+          future: Future.wait([
+            _quizRepo.getQuestions(quizId),
+            _quizRepo.getQuiz(quizId),
+          ]),
           builder: (context, qsNap) {
-            final questions = qsNap.data ?? const <dynamic>[];
+            final questions =
+                (qsNap.data?[0] as List<dynamic>?) ?? const <dynamic>[];
+            final quiz = qsNap.data?[1] as QuizMeta?;
+            final gameMode = quiz?.gameMode ?? 'standard';
             QuizQuestion? q;
             if (index >= 0 && index < questions.length) q = questions[index];
 
@@ -91,34 +99,49 @@ class _QuestionPlayerScreenState extends State<QuestionPlayerScreen> {
                 }
               },
               child: Scaffold(
-                backgroundColor: Colors.grey[50],
+                backgroundColor: const Color(0xFFF5F7FA),
                 appBar: AppBar(
                   title: Row(
                     children: [
                       Container(
                         padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 6,
+                          horizontal: 18,
+                          vertical: 10,
                         ),
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
-                            colors: [Colors.purple[400]!, Colors.purple[600]!],
+                            colors: [
+                              Colors.purple[400]!,
+                              Colors.deepPurple[600]!,
+                            ],
                           ),
-                          borderRadius: BorderRadius.circular(20),
+                          borderRadius: BorderRadius.circular(24),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.purple.withOpacity(0.3),
-                              blurRadius: 8,
-                              offset: const Offset(0, 2),
+                              color: Colors.purple.withOpacity(0.4),
+                              blurRadius: 12,
+                              offset: const Offset(0, 4),
                             ),
                           ],
                         ),
-                        child: Text(
-                          'Question ${index + 1}',
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(
+                              Icons.quiz,
+                              size: 22,
+                              color: Colors.white,
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              'Question ${index + 1}',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w900,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],
@@ -126,11 +149,11 @@ class _QuestionPlayerScreenState extends State<QuestionPlayerScreen> {
                   elevation: 0,
                   backgroundColor: Colors.transparent,
                   flexibleSpace: Container(
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       gradient: LinearGradient(
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
-                        colors: [Colors.blue[400]!, Colors.purple[400]!],
+                        colors: [Color(0xFF667eea), Color(0xFF764ba2)],
                       ),
                     ),
                   ),
@@ -222,7 +245,9 @@ class _QuestionPlayerScreenState extends State<QuestionPlayerScreen> {
                                 .animate()
                                 .slideY(begin: -1, duration: 400.ms)
                                 .fadeIn(),
-                          Expanded(child: _buildQuestion(context, q, state)),
+                          Expanded(
+                            child: _buildQuestion(context, q, state, gameMode),
+                          ),
                         ],
                       ),
               ), // Scaffold
@@ -247,7 +272,12 @@ class _QuestionPlayerScreenState extends State<QuestionPlayerScreen> {
     );
   }
 
-  Widget _buildQuestion(BuildContext context, QuizQuestion q, String state) {
+  Widget _buildQuestion(
+    BuildContext context,
+    QuizQuestion q,
+    String state,
+    String gameMode,
+  ) {
     final answering = state == 'answering';
     final revealing = state == 'reveal';
 
@@ -259,85 +289,184 @@ class _QuestionPlayerScreenState extends State<QuestionPlayerScreen> {
         return ListView(
           padding: const EdgeInsets.all(16),
           children: [
+            // Show game mode indicator
+            if (gameMode != 'standard')
+              Container(
+                margin: const EdgeInsets.only(bottom: 16),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: _getGameModeColors(gameMode),
+                  ),
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: _getGameModeColors(gameMode)[0].withOpacity(0.4),
+                      blurRadius: 8,
+                      offset: const Offset(0, 3),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      _getGameModeIcon(gameMode),
+                      style: const TextStyle(fontSize: 20),
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      _getGameModeName(gameMode),
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                      ),
+                    ),
+                    if (gameMode == 'uniqueAnswer') ...[
+                      const SizedBox(width: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.3),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: const Text(
+                          'Think Unique!',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ).animate().fadeIn(duration: 400.ms).slideY(begin: -0.5, end: 0),
+
             // Show result summary during reveal
             if (revealing && q.correctIndex != null)
               Container(
-                    margin: const EdgeInsets.only(bottom: 20),
-                    padding: const EdgeInsets.all(20),
+                    margin: const EdgeInsets.only(bottom: 24),
+                    padding: const EdgeInsets.all(24),
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: (_submittedValue == q.correctIndex)
-                            ? [Colors.green[100]!, Colors.green[50]!]
-                            : [Colors.orange[100]!, Colors.orange[50]!],
+                            ? [Colors.green[400]!, Colors.green[600]!]
+                            : [Colors.red[500]!, Colors.red[700]!],
                       ),
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(
-                        color: (_submittedValue == q.correctIndex)
-                            ? Colors.green[400]!
-                            : Colors.orange[400]!,
-                        width: 2,
-                      ),
+                      borderRadius: BorderRadius.circular(20),
                       boxShadow: [
                         BoxShadow(
                           color:
                               ((_submittedValue == q.correctIndex)
                                       ? Colors.green
-                                      : Colors.orange)
-                                  .withOpacity(0.2),
-                          blurRadius: 12,
-                          offset: const Offset(0, 4),
+                                      : Colors.red)
+                                  .withOpacity(0.5),
+                          blurRadius: 20,
+                          offset: const Offset(0, 8),
                         ),
                       ],
                     ),
-                    child: Row(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Container(
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color: (_submittedValue == q.correctIndex)
-                                ? Colors.green[400]
-                                : Colors.orange[400],
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Icon(
-                            (_submittedValue == q.correctIndex)
-                                ? Icons.emoji_events
-                                : Icons.lightbulb_outline,
-                            color: Colors.white,
-                            size: 32,
-                          ),
-                        ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                (_submittedValue == q.correctIndex)
-                                    ? '🎉 Correct Answer!'
-                                    : '💡 Correct Answer:',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 18,
-                                  color: (_submittedValue == q.correctIndex)
-                                      ? Colors.green[800]
-                                      : Colors.orange[800],
+                        Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(14),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(0.25),
+                                borderRadius: BorderRadius.circular(14),
+                                border: Border.all(
+                                  color: Colors.white.withOpacity(0.4),
+                                  width: 2,
                                 ),
                               ),
-                              if (_submittedValue != q.correctIndex) ...[
-                                const SizedBox(height: 6),
-                                Text(
-                                  q.options[q.correctIndex!].toString(),
-                                  style: TextStyle(
-                                    fontSize: 15,
-                                    color: Colors.green[800],
-                                    fontWeight: FontWeight.w600,
+                              child: Icon(
+                                (_submittedValue == q.correctIndex)
+                                    ? Icons.emoji_events
+                                    : Icons.highlight_off,
+                                color: Colors.white,
+                                size: 32,
+                              ),
+                            ),
+                            const SizedBox(width: 16),
+                            Expanded(
+                              child: Text(
+                                (_submittedValue == q.correctIndex)
+                                    ? '🎉 Correct!'
+                                    : '❌ Wrong Answer',
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 20,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        if (_submittedValue != q.correctIndex) ...[
+                          const SizedBox(height: 20),
+                          Container(
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Icon(
+                                      Icons.check_circle,
+                                      color: Colors.green[600],
+                                      size: 24,
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Text(
+                                      'Correct Answer:',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16,
+                                        color: Colors.grey[700],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 12),
+                                Container(
+                                  width: double.infinity,
+                                  padding: const EdgeInsets.all(14),
+                                  decoration: BoxDecoration(
+                                    color: Colors.green[50],
+                                    borderRadius: BorderRadius.circular(10),
+                                    border: Border.all(
+                                      color: Colors.green[300]!,
+                                      width: 2,
+                                    ),
+                                  ),
+                                  child: Text(
+                                    q.options[q.correctIndex!].toString(),
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      color: Colors.green[800],
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
                                 ),
                               ],
-                            ],
+                            ),
                           ),
-                        ),
+                        ],
                       ],
                     ),
                   )
@@ -351,28 +480,60 @@ class _QuestionPlayerScreenState extends State<QuestionPlayerScreen> {
                   )
                   .scale(begin: const Offset(0.9, 0.9)),
 
-            // Question text card
+            // Question text card with enhanced styling
             Container(
               margin: const EdgeInsets.only(bottom: 24),
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(16),
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [Colors.white, Colors.purple[50]!.withOpacity(0.3)],
+                ),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: Colors.purple[100]!, width: 2),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withOpacity(0.08),
-                    blurRadius: 16,
-                    offset: const Offset(0, 4),
+                    blurRadius: 20,
+                    offset: const Offset(0, 6),
+                  ),
+                  BoxShadow(
+                    color: Colors.purple.withOpacity(0.1),
+                    blurRadius: 15,
+                    offset: const Offset(0, 3),
                   ),
                 ],
               ),
-              child: Text(
-                q.text,
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20,
-                  height: 1.4,
-                ),
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [Colors.purple[400]!, Colors.deepPurple[600]!],
+                      ),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Icon(
+                      Icons.help_outline,
+                      color: Colors.white,
+                      size: 24,
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Text(
+                      q.text,
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                        height: 1.4,
+                        color: Colors.grey[900],
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ).animate().fadeIn(delay: 100.ms).slideX(begin: -0.2, end: 0),
 
@@ -386,179 +547,205 @@ class _QuestionPlayerScreenState extends State<QuestionPlayerScreen> {
 
               return Padding(
                 padding: const EdgeInsets.only(bottom: 12.0),
-                child:
-                    ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 20,
-                              vertical: 18,
-                            ),
-                            backgroundColor: showCorrect
-                                ? Colors.green[500]
-                                : showWrong
-                                ? Colors.red[500]
-                                : selected
-                                ? Colors.purple[100]
-                                : Colors.white,
-                            foregroundColor: (showCorrect || showWrong)
-                                ? Colors.white
-                                : selected
-                                ? Colors.purple[900]
-                                : Colors.grey[800],
-                            elevation: selected ? 8 : 2,
-                            shadowColor: selected
-                                ? Colors.purple.withOpacity(0.4)
-                                : Colors.black.withOpacity(0.1),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                              side: BorderSide(
-                                color: showCorrect
-                                    ? Colors.green[700]!
-                                    : showWrong
-                                    ? Colors.red[700]!
-                                    : selected
-                                    ? Colors.purple[400]!
-                                    : Colors.grey[300]!,
-                                width: 2,
+                child: AnimatedScale(
+                  duration: const Duration(milliseconds: 200),
+                  scale: selected ? 1.02 : 1.0,
+                  child:
+                      ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 24,
+                                vertical: 20,
+                              ),
+                              backgroundColor: showCorrect
+                                  ? Colors.green[500]
+                                  : showWrong
+                                  ? Colors.red[500]
+                                  : selected
+                                  ? Colors.purple[500]
+                                  : Colors.white,
+                              foregroundColor:
+                                  (showCorrect || showWrong || selected)
+                                  ? Colors.white
+                                  : Colors.grey[800],
+                              elevation: selected ? 12 : 3,
+                              shadowColor: showCorrect
+                                  ? Colors.green.withOpacity(0.5)
+                                  : showWrong
+                                  ? Colors.red.withOpacity(0.5)
+                                  : selected
+                                  ? Colors.purple.withOpacity(0.5)
+                                  : Colors.black.withOpacity(0.1),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(16),
+                                side: BorderSide(
+                                  color: showCorrect
+                                      ? Colors.green[700]!
+                                      : showWrong
+                                      ? Colors.red[700]!
+                                      : selected
+                                      ? Colors.purple[700]!
+                                      : Colors.grey[300]!,
+                                  width: 3,
+                                ),
                               ),
                             ),
-                          ),
-                          onPressed: (!answering || _submittedValue != null)
-                              ? null
-                              : () async {
-                                  setState(() => _submittedValue = i);
-                                  await _answerCtrl.submitAnswer(
-                                    sessionId: widget.sessionId,
-                                    qIndex: q.index,
-                                    value: i,
-                                  );
-                                },
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Container(
-                                width: 36,
-                                height: 36,
-                                decoration: BoxDecoration(
-                                  color: showCorrect
-                                      ? Colors.white.withOpacity(0.3)
-                                      : showWrong
-                                      ? Colors.white.withOpacity(0.3)
-                                      : selected
-                                      ? Colors.purple[300]
-                                      : Colors.grey[200],
-                                  borderRadius: BorderRadius.circular(8),
+                            onPressed: (!answering || _submittedValue != null)
+                                ? null
+                                : () async {
+                                    SoundService().play(SoundEffect.buttonTap);
+                                    setState(() => _submittedValue = i);
+                                    await _answerCtrl.submitAnswer(
+                                      sessionId: widget.sessionId,
+                                      qIndex: q.index,
+                                      value: i,
+                                    );
+                                    SoundService().play(SoundEffect.success);
+                                  },
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Container(
+                                  width: 42,
+                                  height: 42,
+                                  decoration: BoxDecoration(
+                                    color: showCorrect
+                                        ? Colors.white.withOpacity(0.3)
+                                        : showWrong
+                                        ? Colors.white.withOpacity(0.3)
+                                        : selected
+                                        ? Colors.white.withOpacity(0.25)
+                                        : Colors.purple[100],
+                                    borderRadius: BorderRadius.circular(10),
+                                    border: Border.all(
+                                      color:
+                                          (showCorrect || showWrong || selected)
+                                          ? Colors.white.withOpacity(0.4)
+                                          : Colors.purple[200]!,
+                                      width: 2,
+                                    ),
+                                  ),
+                                  child: Center(
+                                    child: showCorrect
+                                        ? const Icon(
+                                            Icons.check_circle,
+                                            color: Colors.white,
+                                            size: 24,
+                                          )
+                                        : showWrong
+                                        ? const Icon(
+                                            Icons.cancel,
+                                            color: Colors.white,
+                                            size: 24,
+                                          )
+                                        : Text(
+                                            String.fromCharCode(65 + i),
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 16,
+                                              color: selected
+                                                  ? Colors.white
+                                                  : Colors.grey[700],
+                                            ),
+                                          ),
+                                  ),
                                 ),
-                                child: Center(
-                                  child: showCorrect
-                                      ? const Icon(
-                                          Icons.check_circle,
-                                          color: Colors.white,
-                                          size: 24,
-                                        )
-                                      : showWrong
-                                      ? const Icon(
-                                          Icons.cancel,
-                                          color: Colors.white,
-                                          size: 24,
+                                const SizedBox(width: 16),
+                                Expanded(
+                                  child:
+                                      q.type == QuestionType.image &&
+                                          opt.toString().startsWith('http')
+                                      ? ClipRRect(
+                                          borderRadius: BorderRadius.circular(
+                                            8,
+                                          ),
+                                          child: Image.network(
+                                            opt.toString(),
+                                            height: 120,
+                                            fit: BoxFit.cover,
+                                            loadingBuilder: (context, child, loadingProgress) {
+                                              if (loadingProgress == null)
+                                                return child;
+                                              return Container(
+                                                height: 120,
+                                                alignment: Alignment.center,
+                                                child: CircularProgressIndicator(
+                                                  value:
+                                                      loadingProgress
+                                                              .expectedTotalBytes !=
+                                                          null
+                                                      ? loadingProgress
+                                                                .cumulativeBytesLoaded /
+                                                            loadingProgress
+                                                                .expectedTotalBytes!
+                                                      : null,
+                                                ),
+                                              );
+                                            },
+                                            errorBuilder:
+                                                (context, error, stackTrace) {
+                                                  return Container(
+                                                    height: 120,
+                                                    alignment: Alignment.center,
+                                                    child: Column(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                      children: [
+                                                        Icon(
+                                                          Icons.broken_image,
+                                                          color:
+                                                              Colors.grey[400],
+                                                        ),
+                                                        const SizedBox(
+                                                          height: 4,
+                                                        ),
+                                                        Text(
+                                                          'Image failed to load',
+                                                          style: TextStyle(
+                                                            color: Colors
+                                                                .grey[600],
+                                                            fontSize: 12,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  );
+                                                },
+                                          ),
                                         )
                                       : Text(
-                                          String.fromCharCode(65 + i),
+                                          opt.toString(),
                                           style: TextStyle(
-                                            fontWeight: FontWeight.bold,
                                             fontSize: 16,
-                                            color: selected
-                                                ? Colors.white
-                                                : Colors.grey[700],
+                                            fontWeight:
+                                                selected ||
+                                                    showCorrect ||
+                                                    showWrong
+                                                ? FontWeight.bold
+                                                : FontWeight.w500,
                                           ),
                                         ),
                                 ),
-                              ),
-                              const SizedBox(width: 16),
-                              Expanded(
-                                child:
-                                    q.type == QuestionType.image &&
-                                        opt.toString().startsWith('http')
-                                    ? ClipRRect(
-                                        borderRadius: BorderRadius.circular(8),
-                                        child: Image.network(
-                                          opt.toString(),
-                                          height: 120,
-                                          fit: BoxFit.cover,
-                                          loadingBuilder: (context, child, loadingProgress) {
-                                            if (loadingProgress == null)
-                                              return child;
-                                            return Container(
-                                              height: 120,
-                                              alignment: Alignment.center,
-                                              child: CircularProgressIndicator(
-                                                value:
-                                                    loadingProgress
-                                                            .expectedTotalBytes !=
-                                                        null
-                                                    ? loadingProgress
-                                                              .cumulativeBytesLoaded /
-                                                          loadingProgress
-                                                              .expectedTotalBytes!
-                                                    : null,
-                                              ),
-                                            );
-                                          },
-                                          errorBuilder:
-                                              (context, error, stackTrace) {
-                                                return Container(
-                                                  height: 120,
-                                                  alignment: Alignment.center,
-                                                  child: Column(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .center,
-                                                    children: [
-                                                      Icon(
-                                                        Icons.broken_image,
-                                                        color: Colors.grey[400],
-                                                      ),
-                                                      const SizedBox(height: 4),
-                                                      Text(
-                                                        'Image failed to load',
-                                                        style: TextStyle(
-                                                          color:
-                                                              Colors.grey[600],
-                                                          fontSize: 12,
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                );
-                                              },
-                                        ),
-                                      )
-                                    : Text(
-                                        opt.toString(),
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight:
-                                              selected ||
-                                                  showCorrect ||
-                                                  showWrong
-                                              ? FontWeight.bold
-                                              : FontWeight.w500,
-                                        ),
-                                      ),
-                              ),
-                            ],
+                              ],
+                            ),
+                          )
+                          .animate(target: showCorrect ? 1 : 0)
+                          .scale(
+                            duration: 400.ms,
+                            curve: Curves.elasticOut,
+                            begin: const Offset(1, 1),
+                            end: const Offset(1.05, 1.05),
+                          )
+                          .shimmer(duration: 1000.ms, color: Colors.white)
+                          .animate(target: showWrong ? 1 : 0)
+                          .shake(duration: 400.ms, hz: 5)
+                          .shimmer(
+                            delay: (400 + (i * 100)).ms,
+                            duration: 800.ms,
+                            color: Colors.white.withOpacity(0.4),
                           ),
-                        )
-                        .animate(target: showCorrect ? 1 : 0)
-                        .scale(
-                          duration: 400.ms,
-                          curve: Curves.elasticOut,
-                          begin: const Offset(1, 1),
-                          end: const Offset(1.05, 1.05),
-                        )
-                        .shimmer(duration: 1000.ms, color: Colors.white)
-                        .animate(target: showWrong ? 1 : 0)
-                        .shake(duration: 400.ms, hz: 5),
+                ),
               );
             }),
             if (_submittedValue != null)
@@ -595,6 +782,57 @@ class _QuestionPlayerScreenState extends State<QuestionPlayerScreen> {
             );
           },
         );
+    }
+  }
+
+  List<Color> _getGameModeColors(String gameMode) {
+    switch (gameMode) {
+      case 'uniqueAnswer':
+        return [Colors.purple[400]!, Colors.deepPurple[600]!];
+      case 'majorityRules':
+        return [Colors.green[400]!, Colors.teal[600]!];
+      case 'liar':
+        return [Colors.amber[600]!, Colors.orange[700]!];
+      case 'truthOrDare':
+        return [Colors.pink[400]!, Colors.purple[500]!];
+      case 'hrissa':
+        return [Colors.orange[600]!, Colors.red[600]!];
+      default:
+        return [Colors.blue[400]!, Colors.blue[600]!];
+    }
+  }
+
+  String _getGameModeIcon(String gameMode) {
+    switch (gameMode) {
+      case 'uniqueAnswer':
+        return '🧠';
+      case 'majorityRules':
+        return '👥';
+      case 'liar':
+        return '🤥';
+      case 'truthOrDare':
+        return '🎭';
+      case 'hrissa':
+        return '🌶️';
+      default:
+        return '🎯';
+    }
+  }
+
+  String _getGameModeName(String gameMode) {
+    switch (gameMode) {
+      case 'uniqueAnswer':
+        return 'UNIQUE ANSWER MODE';
+      case 'majorityRules':
+        return 'الأغلبية - MAJORITY RULES';
+      case 'liar':
+        return 'الكذاب - THE LIAR';
+      case 'truthOrDare':
+        return 'TRUTH OR DARE';
+      case 'hrissa':
+        return 'HRISSA HOT SEAT';
+      default:
+        return 'STANDARD';
     }
   }
 }

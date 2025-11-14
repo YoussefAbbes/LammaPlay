@@ -1,0 +1,89 @@
+{
+  "meta": {
+    "title": "🌍 Geography Master",
+    "description": "Journey around the world! Test your knowledge of countries, capitals, and landmarks.",
+    "category": "Geography",
+    "difficulty": "Medium",
+    "totalQuestions": 10
+  },
+  "questions": [
+    {
+      "index": 0,
+      "type": "mcq",
+      "text": "What is the capital of Japan?",
+      "options": ["Seoul", "Beijing", "Tokyo", "Bangkok"],
+      "correctIndex": 2,
+      "timeLimitSeconds": 20
+    },
+    {
+      "index": 1,
+      "type": "mcq",
+      "text": "Which river is the longest in the world?",
+      "options": ["Amazon River", "Nile River", "Yangtze River", "Mississippi River"],
+      "correctIndex": 1,
+      "timeLimitSeconds": 20
+    },
+    {
+      "index": 2,
+      "type": "numeric",
+      "text": "How many countries are in Africa?",
+      "numericAnswer": 54,
+      "timeLimitSeconds": 25
+    },
+    {
+      "index": 3,
+      "type": "tf",
+      "text": "Mount Everest is located in Nepal.",
+      "options": ["True", "False"],
+      "correctIndex": 0,
+      "timeLimitSeconds": 15
+    },
+    {
+      "index": 4,
+      "type": "mcq",
+      "text": "Which desert is the largest hot desert in the world?",
+      "options": ["Gobi Desert", "Kalahari Desert", "Sahara Desert", "Arabian Desert"],
+      "correctIndex": 2,
+      "timeLimitSeconds": 20
+    },
+    {
+      "index": 5,
+      "type": "mcq",
+      "text": "What is the smallest continent by land area?",
+      "options": ["Europe", "Australia", "Antarctica", "South America"],
+      "correctIndex": 1,
+      "timeLimitSeconds": 20
+    },
+    {
+      "index": 6,
+      "type": "tf",
+      "text": "The Panama Canal connects the Atlantic and Pacific Oceans.",
+      "options": ["True", "False"],
+      "correctIndex": 0,
+      "timeLimitSeconds": 15
+    },
+    {
+      "index": 7,
+      "type": "mcq",
+      "text": "Which country has the most time zones?",
+      "options": ["Russia", "USA", "France", "China"],
+      "correctIndex": 2,
+      "timeLimitSeconds": 25
+    },
+    {
+      "index": 8,
+      "type": "numeric",
+      "text": "How many Great Lakes are there in North America?",
+      "numericAnswer": 5,
+      "timeLimitSeconds": 20
+    },
+    {
+      "index": 9,
+      "type": "mcq",
+      "text": "What is the capital of Canada?",
+      "options": ["Toronto", "Vancouver", "Montreal", "Ottawa"],
+      "correctIndex": 3,
+      "timeLimitSeconds": 20
+    }
+  ]
+}

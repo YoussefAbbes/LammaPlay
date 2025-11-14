@@ -1,9 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:lamaplay/models/question.dart';
+import 'package:lamaplay/models/quiz.dart';
 import 'package:lamaplay/repositories/quiz_repository.dart';
 import 'package:lamaplay/state/session_controller.dart';
 import 'package:lamaplay/services/auth_service.dart';
+import 'package:lamaplay/services/sound_service.dart';
 
 class QuestionHostScreen extends StatelessWidget {
   final String sessionId;
@@ -46,9 +48,15 @@ class QuestionHostScreen extends StatelessWidget {
         // Players will auto-navigate via question_player_screen.dart
 
         return FutureBuilder(
-          future: quizRepo.getQuestions(quizId),
+          future: Future.wait([
+            quizRepo.getQuestions(quizId),
+            quizRepo.getQuiz(quizId),
+          ]),
           builder: (context, qsNap) {
-            final questions = qsNap.data ?? const <dynamic>[];
+            final questions =
+                (qsNap.data?[0] as List<dynamic>?) ?? const <dynamic>[];
+            final quiz = qsNap.data?[1] as QuizMeta?;
+            final gameMode = quiz?.gameMode ?? 'standard';
             QuizQuestion? current;
             if (qIndex >= 0 && qIndex < questions.length) {
               current = questions[qIndex];
@@ -95,29 +103,34 @@ class QuestionHostScreen extends StatelessWidget {
                     }
                   },
                   child: Scaffold(
-                    backgroundColor: Colors.grey[50],
+                    backgroundColor: const Color(0xFFF5F7FA),
                     appBar: AppBar(
                       title: Row(
                         children: [
                           Container(
                             padding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 6,
+                              horizontal: 16,
+                              vertical: 8,
                             ),
                             decoration: BoxDecoration(
-                              color: isHostPlayer
-                                  ? Colors.deepPurple[700]
-                                  : Colors.blue[700],
-                              borderRadius: BorderRadius.circular(20),
+                              gradient: LinearGradient(
+                                colors: isHostPlayer
+                                    ? [
+                                        Colors.deepPurple[400]!,
+                                        Colors.purple[600]!,
+                                      ]
+                                    : [Colors.blue[400]!, Colors.cyan[600]!],
+                              ),
+                              borderRadius: BorderRadius.circular(24),
                               boxShadow: [
                                 BoxShadow(
                                   color:
                                       (isHostPlayer
                                               ? Colors.deepPurple
-                                              : Colors.blue)
-                                          .withOpacity(0.3),
-                                  blurRadius: 8,
-                                  offset: const Offset(0, 2),
+                                              : Colors.cyan)
+                                          .withOpacity(0.4),
+                                  blurRadius: 12,
+                                  offset: const Offset(0, 4),
                                 ),
                               ],
                             ),
@@ -128,24 +141,33 @@ class QuestionHostScreen extends StatelessWidget {
                                   isHostPlayer
                                       ? Icons.sports_esports
                                       : Icons.manage_accounts,
-                                  size: 20,
+                                  size: 22,
                                   color: Colors.white,
                                 ),
-                                const SizedBox(width: 6),
+                                const SizedBox(width: 8),
                                 Text(
                                   'Q${qIndex + 1}',
                                   style: const TextStyle(
                                     color: Colors.white,
-                                    fontWeight: FontWeight.bold,
+                                    fontWeight: FontWeight.w900,
+                                    fontSize: 16,
                                   ),
                                 ),
                               ],
                             ),
                           ),
-                          const SizedBox(width: 8),
-                          Text(
-                            isHostPlayer ? 'Playing as Host' : 'Host Control',
-                            style: const TextStyle(fontSize: 16),
+                          const SizedBox(width: 12),
+                          Flexible(
+                            child: Text(
+                              isHostPlayer
+                                  ? '🎮 Playing as Host'
+                                  : '⚡ Host Control',
+                              style: const TextStyle(
+                                fontSize: 17,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
                           ),
                         ],
                       ),
@@ -156,8 +178,14 @@ class QuestionHostScreen extends StatelessWidget {
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
                             colors: isHostPlayer
-                                ? [Colors.deepPurple[600]!, Colors.purple[500]!]
-                                : [Colors.blue[600]!, Colors.cyan[500]!],
+                                ? [
+                                    const Color(0xFF667eea),
+                                    const Color(0xFF764ba2),
+                                  ]
+                                : [
+                                    const Color(0xFF4facfe),
+                                    const Color(0xFF00f2fe),
+                                  ],
                           ),
                         ),
                       ),
@@ -173,48 +201,65 @@ class QuestionHostScreen extends StatelessWidget {
                                 current != null &&
                                 state == 'answering')
                               Container(
-                                padding: const EdgeInsets.all(16),
-                                margin: const EdgeInsets.only(bottom: 16),
+                                padding: const EdgeInsets.all(20),
+                                margin: const EdgeInsets.only(bottom: 20),
                                 decoration: BoxDecoration(
                                   gradient: LinearGradient(
                                     colors: [
-                                      Colors.purple[100]!,
-                                      Colors.purple[50]!,
+                                      Colors.purple[400]!,
+                                      Colors.deepPurple[600]!,
                                     ],
                                   ),
-                                  borderRadius: BorderRadius.circular(12),
-                                  border: Border.all(
-                                    color: Colors.purple[400]!,
-                                    width: 2,
-                                  ),
+                                  borderRadius: BorderRadius.circular(16),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: Colors.purple.withOpacity(0.2),
-                                      blurRadius: 8,
-                                      offset: const Offset(0, 2),
+                                      color: Colors.purple.withOpacity(0.4),
+                                      blurRadius: 16,
+                                      offset: const Offset(0, 6),
                                     ),
                                   ],
                                 ),
                                 child: Row(
                                   children: [
                                     Container(
-                                      padding: const EdgeInsets.all(10),
+                                      padding: const EdgeInsets.all(12),
                                       decoration: BoxDecoration(
-                                        color: Colors.purple[600],
-                                        borderRadius: BorderRadius.circular(8),
+                                        color: Colors.white.withOpacity(0.2),
+                                        borderRadius: BorderRadius.circular(12),
+                                        border: Border.all(
+                                          color: Colors.white.withOpacity(0.3),
+                                          width: 2,
+                                        ),
                                       ),
                                       child: const Icon(
                                         Icons.sports_esports,
                                         color: Colors.white,
-                                        size: 24,
+                                        size: 28,
                                       ),
                                     ),
-                                    const SizedBox(width: 12),
-                                    Text(
-                                      'You are playing! Answer below',
-                                      style: TextStyle(
-                                        color: Colors.purple[700],
-                                        fontWeight: FontWeight.bold,
+                                    const SizedBox(width: 16),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: const [
+                                          Text(
+                                            '🎮 You are playing!',
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.w900,
+                                              fontSize: 16,
+                                            ),
+                                          ),
+                                          SizedBox(height: 4),
+                                          Text(
+                                            'Answer the question below',
+                                            style: TextStyle(
+                                              color: Colors.white70,
+                                              fontSize: 13,
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ),
                                   ],
@@ -251,11 +296,89 @@ class QuestionHostScreen extends StatelessWidget {
                                 },
                               ),
                             if (current != null) ...[
-                              Text(
-                                current.text,
-                                style: Theme.of(context).textTheme.titleLarge,
+                              // Game mode indicator
+                              if (gameMode != 'standard')
+                                Container(
+                                  margin: const EdgeInsets.only(bottom: 16),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 20,
+                                    vertical: 14,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      colors: _getGameModeColors(gameMode),
+                                    ),
+                                    borderRadius: BorderRadius.circular(14),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: _getGameModeColors(
+                                          gameMode,
+                                        )[0].withOpacity(0.5),
+                                        blurRadius: 12,
+                                        offset: const Offset(0, 4),
+                                      ),
+                                    ],
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Text(
+                                        _getGameModeIcon(gameMode),
+                                        style: const TextStyle(fontSize: 24),
+                                      ),
+                                      const SizedBox(width: 12),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              _getGameModeName(gameMode),
+                                              style: const TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 16,
+                                              ),
+                                            ),
+                                            const SizedBox(height: 2),
+                                            Text(
+                                              _getGameModeHostHint(gameMode),
+                                              style: TextStyle(
+                                                color: Colors.white.withOpacity(
+                                                  0.9,
+                                                ),
+                                                fontSize: 12,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              Container(
+                                padding: const EdgeInsets.all(24),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(20),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.08),
+                                      blurRadius: 20,
+                                      offset: const Offset(0, 4),
+                                    ),
+                                  ],
+                                ),
+                                child: Text(
+                                  current.text,
+                                  style: Theme.of(context).textTheme.titleLarge
+                                      ?.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 22,
+                                        height: 1.4,
+                                      ),
+                                ),
                               ),
-                              const SizedBox(height: 12),
+                              const SizedBox(height: 20),
                               if (current.media != null)
                                 AspectRatio(
                                   aspectRatio: 16 / 9,
@@ -502,7 +625,10 @@ class _HostButtons extends StatelessWidget {
       children: [
         if (state == 'answering')
           ElevatedButton.icon(
-            onPressed: () => controller.reveal(sessionId: sessionId),
+            onPressed: () {
+              SoundService().play(SoundEffect.whoosh);
+              controller.reveal(sessionId: sessionId);
+            },
             icon: const Icon(Icons.visibility, size: 18),
             label: const Text('Reveal Answers'),
             style: ElevatedButton.styleFrom(
@@ -512,7 +638,10 @@ class _HostButtons extends StatelessWidget {
           ),
         if (state == 'reveal')
           ElevatedButton.icon(
-            onPressed: () => controller.nextQuestion(sessionId: sessionId),
+            onPressed: () {
+              SoundService().play(SoundEffect.success);
+              controller.nextQuestion(sessionId: sessionId);
+            },
             icon: const Icon(Icons.arrow_forward, size: 18),
             label: const Text('Next Question'),
             style: ElevatedButton.styleFrom(
@@ -1341,7 +1470,54 @@ class _AnswerStatistics extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 12),
+              // Show correct answer prominently
+              if (question.correctIndex != null)
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.green[100],
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.green[600]!, width: 2),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.check_circle,
+                        color: Colors.green[700],
+                        size: 28,
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Correct Answer:',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14,
+                                color: Colors.green[900],
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              question.options[question.correctIndex!]
+                                  .toString(),
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.green[800],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              const SizedBox(height: 12),
               Text(
                 '$correctCount / $totalAnswers correct (${totalAnswers > 0 ? ((correctCount / totalAnswers * 100).toStringAsFixed(0)) : '0'}%)',
                 style: const TextStyle(fontWeight: FontWeight.bold),
@@ -1406,5 +1582,74 @@ class _AnswerStatistics extends StatelessWidget {
         );
       },
     );
+  }
+}
+
+// Game mode helper functions
+List<Color> _getGameModeColors(String gameMode) {
+  switch (gameMode) {
+    case 'uniqueAnswer':
+      return [Colors.purple[400]!, Colors.deepPurple[600]!];
+    case 'majorityRules':
+      return [Colors.green[400]!, Colors.teal[600]!];
+    case 'liar':
+      return [Colors.amber[600]!, Colors.orange[700]!];
+    case 'truthOrDare':
+      return [Colors.pink[400]!, Colors.purple[500]!];
+    case 'hrissa':
+      return [Colors.orange[600]!, Colors.red[600]!];
+    default:
+      return [Colors.blue[400]!, Colors.blue[600]!];
+  }
+}
+
+String _getGameModeIcon(String gameMode) {
+  switch (gameMode) {
+    case 'uniqueAnswer':
+      return '🧠';
+    case 'majorityRules':
+      return '👥';
+    case 'liar':
+      return '🤥';
+    case 'truthOrDare':
+      return '🎭';
+    case 'hrissa':
+      return '🌶️';
+    default:
+      return '🎯';
+  }
+}
+
+String _getGameModeName(String gameMode) {
+  switch (gameMode) {
+    case 'uniqueAnswer':
+      return 'UNIQUE ANSWER MODE';
+    case 'majorityRules':
+      return 'الأغلبية - MAJORITY RULES';
+    case 'liar':
+      return 'الكذاب - THE LIAR';
+    case 'truthOrDare':
+      return 'TRUTH OR DARE';
+    case 'hrissa':
+      return 'HRISSA HOT SEAT';
+    default:
+      return 'STANDARD';
+  }
+}
+
+String _getGameModeHostHint(String gameMode) {
+  switch (gameMode) {
+    case 'uniqueAnswer':
+      return 'Only unique correct answers score. Show answer distribution!';
+    case 'majorityRules':
+      return 'Majority wins! Popular answers get bonus points. Watch the crowd follow!';
+    case 'liar':
+      return 'Each player shares 2 truths + 1 lie. Others vote to guess the lie!';
+    case 'truthOrDare':
+      return 'Players choose truth or dare. Keep it fun!';
+    case 'hrissa':
+      return 'One player in the hot seat. Spicy questions ahead! 🔥';
+    default:
+      return 'Classic quiz mode';
   }
 }

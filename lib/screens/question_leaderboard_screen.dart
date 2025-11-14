@@ -118,6 +118,9 @@ class QuestionLeaderboardScreen extends StatelessWidget {
                           'correct': result?['correct'] == true,
                           'streak':
                               (playerData['streak'] as num?)?.toInt() ?? 0,
+                          'isUnique': result?['isUnique'] == true,
+                          'timesSelected': (result?['timesSelected'] as num?)
+                              ?.toInt(),
                         };
                       }).toList();
 
@@ -158,26 +161,47 @@ class QuestionLeaderboardScreen extends StatelessWidget {
                                 child: Column(
                                   children: [
                                     Container(
-                                      padding: const EdgeInsets.all(16),
-                                      decoration: BoxDecoration(
-                                        color: Colors.white.withOpacity(0.2),
-                                        borderRadius: BorderRadius.circular(16),
-                                      ),
-                                      child: const Text(
-                                        '📊',
-                                        style: TextStyle(fontSize: 48),
-                                      ),
-                                    ),
-                                    const SizedBox(height: 16),
+                                          padding: const EdgeInsets.all(20),
+                                          decoration: BoxDecoration(
+                                            color: Colors.white.withOpacity(
+                                              0.25,
+                                            ),
+                                            shape: BoxShape.circle,
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: Colors.white.withOpacity(
+                                                  0.4,
+                                                ),
+                                                blurRadius: 20,
+                                                spreadRadius: 5,
+                                              ),
+                                            ],
+                                          ),
+                                          child: const Text(
+                                            '🏆',
+                                            style: TextStyle(fontSize: 56),
+                                          ),
+                                        )
+                                        .animate(
+                                          onPlay: (controller) =>
+                                              controller.repeat(reverse: true),
+                                        )
+                                        .scale(duration: 1000.ms),
+                                    const SizedBox(height: 20),
                                     const Text(
-                                      'Leaderboard',
-                                      style: TextStyle(
-                                        fontSize: 36,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.white,
-                                        letterSpacing: 0.5,
-                                      ),
-                                    ),
+                                          '⚡ RANKINGS ⚡',
+                                          style: TextStyle(
+                                            fontSize: 42,
+                                            fontWeight: FontWeight.w900,
+                                            color: Colors.white,
+                                            letterSpacing: 2,
+                                          ),
+                                        )
+                                        .animate(
+                                          onPlay: (controller) =>
+                                              controller.repeat(),
+                                        )
+                                        .shimmer(duration: 2000.ms),
                                     const SizedBox(height: 8),
                                     Container(
                                       padding: const EdgeInsets.symmetric(
@@ -391,11 +415,77 @@ class QuestionLeaderboardScreen extends StatelessWidget {
                                               ),
                                           ],
                                         ),
-                                        subtitle: Row(
+                                        subtitle: Wrap(
+                                          spacing: 8,
+                                          runSpacing: 4,
                                           children: [
+                                            if (player['isUnique'] == true)
+                                              Container(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                      horizontal: 8,
+                                                      vertical: 4,
+                                                    ),
+                                                decoration: BoxDecoration(
+                                                  gradient: LinearGradient(
+                                                    colors: [
+                                                      Colors.purple[400]!,
+                                                      Colors.deepPurple[600]!,
+                                                    ],
+                                                  ),
+                                                  borderRadius:
+                                                      BorderRadius.circular(8),
+                                                ),
+                                                child: const Row(
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  children: [
+                                                    Text(
+                                                      '🧠',
+                                                      style: TextStyle(
+                                                        fontSize: 12,
+                                                      ),
+                                                    ),
+                                                    SizedBox(width: 4),
+                                                    Text(
+                                                      'UNIQUE!',
+                                                      style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 11,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            if (player['timesSelected'] !=
+                                                    null &&
+                                                player['timesSelected'] as int >
+                                                    1)
+                                              Container(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                      horizontal: 8,
+                                                      vertical: 4,
+                                                    ),
+                                                decoration: BoxDecoration(
+                                                  color: Colors.grey[300],
+                                                  borderRadius:
+                                                      BorderRadius.circular(8),
+                                                ),
+                                                child: Text(
+                                                  '${player['timesSelected']}× picked',
+                                                  style: const TextStyle(
+                                                    color: Colors.black87,
+                                                    fontSize: 11,
+                                                    fontWeight: FontWeight.w600,
+                                                  ),
+                                                ),
+                                              ),
                                             if (player['streak'] as int > 2)
                                               Text(
-                                                '🔥 ${player['streak']} streak  ',
+                                                '🔥 ${player['streak']} streak',
                                                 style: const TextStyle(
                                                   color: Colors.orange,
                                                   fontWeight: FontWeight.bold,

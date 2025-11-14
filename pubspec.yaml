@@ -48,6 +48,8 @@ dependencies:
   lottie: ^3.1.2
   image_picker: ^1.0.7
   http: ^1.1.0
+  audioplayers: ^6.0.0
+  confetti: ^0.7.0
   
   # State management and UI (optional but useful)
   provider: ^6.1.2
@@ -82,6 +84,9 @@ flutter:
     - assets/games/speed_categories/categories.json
     - assets/games/odd_one_out/spy_words.json
     - assets/games/bluff_trivia/trivia_pack.json
+    # Quiz templates
+    - assets/quizzes/
+    - assets/quizzes/hrissa_cards.json
     # Image / photo placeholders (add real photos later – keep filenames stable)
     - assets/images/
 

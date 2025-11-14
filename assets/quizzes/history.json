@@ -1,0 +1,89 @@
+{
+  "meta": {
+    "title": "📚 History Through Time",
+    "description": "Travel back in time and test your knowledge of historical events and figures!",
+    "category": "History",
+    "difficulty": "Medium",
+    "totalQuestions": 10
+  },
+  "questions": [
+    {
+      "index": 0,
+      "type": "numeric",
+      "text": "In what year did World War II end?",
+      "numericAnswer": 1945,
+      "timeLimitSeconds": 20
+    },
+    {
+      "index": 1,
+      "type": "mcq",
+      "text": "Who was the first President of the United States?",
+      "options": ["Thomas Jefferson", "George Washington", "John Adams", "Benjamin Franklin"],
+      "correctIndex": 1,
+      "timeLimitSeconds": 20
+    },
+    {
+      "index": 2,
+      "type": "tf",
+      "text": "The Roman Empire fell in 476 AD.",
+      "options": ["True", "False"],
+      "correctIndex": 0,
+      "timeLimitSeconds": 20
+    },
+    {
+      "index": 3,
+      "type": "mcq",
+      "text": "Which ancient wonder is still standing today?",
+      "options": ["Hanging Gardens of Babylon", "Great Pyramid of Giza", "Colossus of Rhodes", "Lighthouse of Alexandria"],
+      "correctIndex": 1,
+      "timeLimitSeconds": 20
+    },
+    {
+      "index": 4,
+      "type": "mcq",
+      "text": "Who discovered America in 1492?",
+      "options": ["Amerigo Vespucci", "Christopher Columbus", "Leif Erikson", "Ferdinand Magellan"],
+      "correctIndex": 1,
+      "timeLimitSeconds": 20
+    },
+    {
+      "index": 5,
+      "type": "tf",
+      "text": "The French Revolution started in 1789.",
+      "options": ["True", "False"],
+      "correctIndex": 0,
+      "timeLimitSeconds": 15
+    },
+    {
+      "index": 6,
+      "type": "mcq",
+      "text": "Which Egyptian pharaoh was known as the 'Boy King'?",
+      "options": ["Ramses II", "Tutankhamun", "Cleopatra", "Khufu"],
+      "correctIndex": 1,
+      "timeLimitSeconds": 20
+    },
+    {
+      "index": 7,
+      "type": "numeric",
+      "text": "How many years did the Hundred Years' War actually last?",
+      "numericAnswer": 116,
+      "timeLimitSeconds": 25
+    },
+    {
+      "index": 8,
+      "type": "mcq",
+      "text": "Who wrote 'The Communist Manifesto'?",
+      "options": ["Vladimir Lenin", "Joseph Stalin", "Karl Marx", "Mao Zedong"],
+      "correctIndex": 2,
+      "timeLimitSeconds": 20
+    },
+    {
+      "index": 9,
+      "type": "tf",
+      "text": "The Berlin Wall fell in 1989.",
+      "options": ["True", "False"],
+      "correctIndex": 0,
+      "timeLimitSeconds": 15
+    }
+  ]
+}

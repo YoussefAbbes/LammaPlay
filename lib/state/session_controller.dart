@@ -3,6 +3,9 @@ import 'package:lamaplay/repositories/quiz_repository.dart';
 import 'package:lamaplay/repositories/session_repository.dart';
 import 'package:lamaplay/services/auth_service.dart';
 import 'package:lamaplay/services/host_scoring_service.dart';
+import 'package:lamaplay/services/unique_answer_scoring_service.dart';
+import 'package:lamaplay/services/majority_rules_scoring_service.dart';
+import 'package:lamaplay/services/liar_scoring_service.dart';
 
 /// Host-driven session lifecycle logic (Firestore-only authority).
 class SessionController {
@@ -10,6 +13,9 @@ class SessionController {
   final _sessionRepo = SessionRepository();
   final _auth = AuthService();
   final _scoringService = HostScoringService();
+  final _uniqueAnswerScoring = UniqueAnswerScoringService();
+  final _majorityRulesScoring = MajorityRulesScoringService();
+  final _liarScoring = LiarScoringService();
 
   Future<String> createSession(
     String quizId, {
@@ -29,6 +35,7 @@ class SessionController {
   Future<void> startSession({
     required String sessionId,
     bool hostPlays = false,
+    String? hostNickname,
   }) async {
     // Loads first question for timing purposes.
     final sessionDoc = FirebaseFirestore.instance
@@ -42,9 +49,11 @@ class SessionController {
     // Create player document for host if they want to play
     if (hostPlays) {
       await sessionDoc.collection('players').doc(_auth.uid).set({
-        'nickname': 'Host',
+        'nickname': hostNickname ?? 'Host',
         'score': 0,
         'streak': 0,
+        'correctAnswers': 0,
+        'totalAnswers': 0,
         'joinedAt': FieldValue.serverTimestamp(),
         'isHost': true,
       });
@@ -83,12 +92,66 @@ class SessionController {
     if (data['hostId'] != _auth.uid) throw Exception('Host only');
 
     final qIndex = (data['currentQuestionIndex'] as num).toInt();
+    final quizId = data['quizId'] as String;
 
     // Update state to reveal
     await sessionDoc.update({'questionState': 'reveal'});
 
-    // Execute scoring calculation
-    await _scoringService.scoreQuestion(sessionId: sessionId, qIndex: qIndex);
+    // Get quiz to check game mode
+    final quiz = await _quizRepo.getQuiz(quizId);
+    final gameMode = quiz?.gameMode ?? 'standard';
+
+    // Execute scoring based on game mode
+    switch (gameMode) {
+      case 'uniqueAnswer':
+        await _uniqueAnswerScoring.scoreQuestion(
+          sessionId: sessionId,
+          qIndex: qIndex,
+        );
+        break;
+      case 'majorityRules':
+        // Get the question to find the correct answer
+        final questions = await _quizRepo.getQuestions(quizId);
+        if (qIndex >= 0 && qIndex < questions.length) {
+          final question = questions[qIndex];
+          final scores = await _majorityRulesScoring.scoreQuestion(
+            sessionId: sessionId,
+            questionIndex: qIndex,
+            correctIndex: question.correctIndex ?? 0,
+          );
+          // Update player scores
+          final batch = FirebaseFirestore.instance.batch();
+          for (final entry in scores.entries) {
+            final playerRef = sessionDoc.collection('players').doc(entry.key);
+            batch.update(playerRef, {
+              'score': FieldValue.increment(entry.value),
+            });
+          }
+          await batch.commit();
+        }
+        break;
+      case 'liar':
+        final scores = await _liarScoring.scoreRound(
+          sessionId: sessionId,
+          questionIndex: qIndex,
+        );
+        // Update player scores
+        final batch = FirebaseFirestore.instance.batch();
+        for (final entry in scores.entries) {
+          final playerRef = sessionDoc.collection('players').doc(entry.key);
+          batch.update(playerRef, {'score': FieldValue.increment(entry.value)});
+        }
+        await batch.commit();
+        break;
+      case 'truthOrDare':
+      case 'hrissa':
+      case 'standard':
+      default:
+        await _scoringService.scoreQuestion(
+          sessionId: sessionId,
+          qIndex: qIndex,
+        );
+    }
   }
 
   Future<void> nextQuestion({required String sessionId}) async {

@@ -1,0 +1,90 @@
+{
+  "meta": {
+    "title": "⚽ Football Legends Quiz",
+    "description": "Test your knowledge about the beautiful game! From legendary players to historic moments.",
+    "category": "Sports",
+    "difficulty": "Medium",
+    "totalQuestions": 10
+  },
+  "questions": [
+    {
+      "index": 0,
+      "type": "mcq",
+      "text": "Who has won the most FIFA Ballon d'Or awards?",
+      "options": ["Cristiano Ronaldo", "Lionel Messi", "Michel Platini", "Johan Cruyff"],
+      "correctIndex": 1,
+      "timeLimitSeconds": 20
+    },
+    {
+      "index": 1,
+      "type": "mcq",
+      "text": "Which country won the first ever FIFA World Cup in 1930?",
+      "options": ["Brazil", "Argentina", "Uruguay", "Italy"],
+      "correctIndex": 2,
+      "timeLimitSeconds": 20
+    },
+    {
+      "index": 2,
+      "type": "tf",
+      "text": "Pele scored over 1000 goals in his professional career.",
+      "options": ["True", "False"],
+      "correctIndex": 0,
+      "timeLimitSeconds": 15
+    },
+    {
+      "index": 3,
+      "type": "mcq",
+      "text": "Which English club has won the most Premier League titles?",
+      "options": ["Liverpool", "Chelsea", "Arsenal", "Manchester United"],
+      "correctIndex": 3,
+      "timeLimitSeconds": 20
+    },
+    {
+      "index": 4,
+      "type": "numeric",
+      "text": "How many players are on the field for each team in a standard football match?",
+      "numericAnswer": 11,
+      "timeLimitSeconds": 15
+    },
+    {
+      "index": 5,
+      "type": "mcq",
+      "text": "Which footballer is known as 'CR7'?",
+      "options": ["Carlos Roberto", "Cristiano Ronaldo", "Christian Eriksen", "Cesc Fabregas"],
+      "correctIndex": 1,
+      "timeLimitSeconds": 15
+    },
+    {
+      "index": 6,
+      "type": "tf",
+      "text": "The offside rule was introduced in the original Laws of the Game in 1863.",
+      "options": ["True", "False"],
+      "correctIndex": 0,
+      "timeLimitSeconds": 20
+    },
+    {
+      "index": 7,
+      "type": "mcq",
+      "text": "Which club did Zinedine Zidane manage to three consecutive Champions League titles?",
+      "options": ["Barcelona", "Real Madrid", "Juventus", "Bayern Munich"],
+      "correctIndex": 1,
+      "timeLimitSeconds": 20
+    },
+    {
+      "index": 8,
+      "type": "mcq",
+      "text": "What is the maximum number of substitutions allowed in a standard match?",
+      "options": ["3", "5", "7", "Unlimited"],
+      "correctIndex": 1,
+      "timeLimitSeconds": 20
+    },
+    {
+      "index": 9,
+      "type": "mcq",
+      "text": "Which country has won the most FIFA World Cup titles?",
+      "options": ["Germany", "Argentina", "Brazil", "Italy"],
+      "correctIndex": 2,
+      "timeLimitSeconds": 20
+    }
+  ]
+}
