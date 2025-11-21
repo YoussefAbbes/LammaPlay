@@ -341,8 +341,10 @@ This project is licensed under the MIT License.
 
 For issues, questions, or suggestions:
 - Open an issue on GitHub
-- Contact: [Your Contact Information]
+- Contact: https://github.com/YoussefAbbes
+           +216 56 207 742      
 
 ---
 
 **Note**: This app is designed for educational and entertainment purposes. Ensure compliance with your region's data protection laws when deploying to production.
+Made By [Youssef Abbes]
